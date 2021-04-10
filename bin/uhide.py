@@ -15,7 +15,7 @@
 import czutils
 
 if __name__ == '__main__':
-    czutils.mainHide()
+    czutils.mainUhide()
 #if
 
 ### aczutro ###################################################################

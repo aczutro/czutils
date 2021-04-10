@@ -11,14 +11,23 @@
 
 """A collection of useful command line utilities and libraries for Python 3."""
 
-__author__ = "Alexander Czutro <github@czutro.ch>\nhttp://alexander.czutro.ch"
+__author__ = "Alexander Czutro <github@czutro.ch> <http://alexander.czutro.ch>"
 __version__ = '1.0'
 
 
-def hide():
+from . import hide
+
+def mainHide():
     """Command line utility to hide files
     """
-    print("hello world")
+    hide.mainHide()
+#hide
+
+
+def mainUhide():
+    """Command line utility to hide files
+    """
+    hide.mainUhide()
 #hide
 
 
