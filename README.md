@@ -1,13 +1,43 @@
 # czutils
+
 A collection of useful command line utilities and libraries for Python 3.
 
 Copyright (C) 2005 - present  Alexander Czutro <github@czutro.ch>
 
-Licence: GNU GPL v3
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+For more details, see the provided licence file or
+<http://www.gnu.org/licenses>.
+
 
 ## Description
 
-A collection of useful one-task applications for the Linux/Unix command line.
+This package comprises a Python 3 library with various help functions
+and classes that can make code more compact and easy-to-read.
+
+It also a includes a collection of useful one-task applications for the
+Unix-like command line.  These applications are designed such that
+their core functionality is implemented in the library instead of the
+"main method".  That means that their functionality can easily be 
+integrated into other Python applications.
+
+## The library
+
+The library has the following structure:
+
+```
+czutils
+|-- utils
+|   |-- czcode.py    : help functions for code automation
+|   |-- czlogging.py : a custom wrapper class for the system logger
+|   `-- czsystem.py  : help functions related to the system environment
+`-- hide.py : functions to hide/unhide files
+```
+
+## Applications
 
 ### hide/uhide
 
@@ -48,19 +78,25 @@ With this, each file `./path/to/file.jpg` will be replaced by its backup
 
 ## Installation
 
-1. Change into the root directory of this distribution (where the files 
-   `setup.py` and `setup.cfg` are) and run the following command.  You
-   don't need to be root to do it.
+### 1. Install the library
+
+Change into the root directory of this distribution (where the files 
+`setup.py` and `setup.cfg` are) and run the following command.  If you
+are not root when you run this command, it will install the library
+locally in your home (and it will be available only to you).
 
 ```python -m pip install .```
 
-2. Copy or move all main executables in directory `bin` to any location of
-   your preference (ideally one that is in your `PATH` variable).  If you 
-   like, you may rename the main executables.
-   
-After the first step, the library's functionality will also be available in
-the interactive Python console with
+The functionality of the library can be accessed from within the 
+interactive Python console or another Python application with
 
 ```python
 import czutils
 ```
+
+### 2. "Install" the applications
+
+Copy or move all executables in directory `bin` to any location of
+your preference (ideally one that is in your `PATH` variable).  Make
+sure they are executable, or make them with `chmod +x`.  If you 
+like, you may rename the main executables.

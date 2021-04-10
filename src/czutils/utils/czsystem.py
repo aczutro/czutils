@@ -5,21 +5,29 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# See the provided licence file, or http://www.gnu.org/licenses/ .
+# For more details, see the provided licence file or
+# <http://www.gnu.org/licenses>.
 #
 ################################################################### aczutro ###
 
-"""A collection of useful command line utilities and libraries for Python 3."""
-
-__author__ = "Alexander Czutro <github@czutro.ch>\nhttp://alexander.czutro.ch"
-__version__ = '1.0'
+"""Help functions related to system environment."""
 
 
-def hide():
-    """Command line utility to hide files
+import os.path
+import sys
+
+
+def appName():
+    """Returns the command that called the application.
+
+    If it's a path, returns only the base name.
     """
-    print("hello world")
-#hide
+    if len(sys.argv):
+        return os.path.basename(sys.argv[0])
+    else:
+        return None
+    #else
+#appName
 
 
 ### aczutro ###################################################################

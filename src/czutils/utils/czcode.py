@@ -9,17 +9,24 @@
 #
 ################################################################### aczutro ###
 
-"""A collection of useful command line utilities and libraries for Python 3."""
-
-__author__ = "Alexander Czutro <github@czutro.ch>\nhttp://alexander.czutro.ch"
-__version__ = '1.0'
+"""Help functions for code automation."""
 
 
-def hide():
-    """Command line utility to hide files
+def autoStr(cls):
+    """Auto-generates __str__ method for the given class.
+
+    Use like this:
+
+    @autoStr
+    class MyClass:
+        ...
     """
-    print("hello world")
-#hide
+    cls.__str__ = lambda self : \
+        "%s { %s }" \
+        % (type(self).__name__,
+           ", ".join("%s = %s" % dictEntry for dictEntry in vars(self).items()))
+    return cls
+#autoStr
 
 
 ### aczutro ###################################################################
