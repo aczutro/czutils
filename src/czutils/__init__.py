@@ -15,24 +15,6 @@
 __author__ = "Alexander Czutro <github@czutro.ch> <http://alexander.czutro.ch>"
 __version__ = "1.0"
 
-
-from . import hide
-
-
-def mainHide():
-    """
-    Command line utility to hide files.
-    """
-    hide.mainHide()
-#hide
-
-
-def mainUhide():
-    '''
-    Command line utility to "unhide" files.
-    '''
-    hide.mainUhide()
-#hide
-
+from . import app, utils
 
 ### aczutro ###################################################################

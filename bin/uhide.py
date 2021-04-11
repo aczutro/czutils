@@ -12,10 +12,10 @@
 #
 ################################################################### aczutro ###
 
-import czutils
+import czutils.app
 
 if __name__ == '__main__':
-    czutils.mainUhide()
+    czutils.app.mainUhide()
 #if
 
 ### aczutro ###################################################################

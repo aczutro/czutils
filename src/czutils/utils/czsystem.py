@@ -10,7 +10,7 @@
 #
 ################################################################### aczutro ###
 
-"""Help functions related to system environment."""
+"""Help functions related to the system (including OS)."""
 
 from . import __version__, __author__
 
@@ -28,6 +28,17 @@ def appName() -> str:
         return None
     #else
 #appName
+
+
+def isProperDir(directory: str):
+    """
+    :param directory: path to a directory
+
+    :return: True iff directory is an actual directory, and not just a
+             soft link to a directory.
+    """
+    return os.path.isdir(directory) and not os.path.islink(directory)
+#_isProperDir
 
 
 ### aczutro ###################################################################

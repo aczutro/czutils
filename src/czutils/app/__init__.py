@@ -10,8 +10,10 @@
 #
 ################################################################### aczutro ###
 
-"""Basic library package."""
+"""Application package."""
 
 from .. import __version__, __author__
+
+from .hide import mainHide, mainUhide
 
 ### aczutro ###################################################################

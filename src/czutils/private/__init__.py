@@ -10,7 +10,7 @@
 #
 ################################################################### aczutro ###
 
-"""Basic library package."""
+'''"Private" help classes and functions used by the library's main modules.'''
 
 from .. import __version__, __author__
 

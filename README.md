@@ -32,12 +32,24 @@ The library has the following structure:
 
 ```
 czutils
-|-- utils
-|   |-- czcode.py    : help functions for code automation
-|   |-- czlogging.py : a custom wrapper class for the system logger
-|   `-- czsystem.py  : help functions related to the system environment
-`-- hide.py : functions to hide/unhide files
+|-- utils            : BASIC LIBRARY PACKAGE
+|   |-- czcode.py      : help functions for code automation
+|   |-- czlogging.py   : a custom wrapper class for the system logger
+|   `-- czsystem.py    : help functions related to the system (including OS)
+|-- app              : APPLICATION PACKAGE
+|   `-- hide.py        : functions to hide/unhide files
+`-- private          : PRIVATE PACKAGE
 ```
+
+The **basic library package** is the main public library.  It is intended
+for the integration into external libraries and applications.
+
+The **application package** comprises the functionality that powers the
+command line applications.  That functionality can also be integrated into
+external applications or libraries.
+
+The **private package** comprises help functions and classes needed by the
+application package.  It is not intended for public use.
 
 
 ## Applications
