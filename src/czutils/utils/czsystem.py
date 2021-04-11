@@ -12,15 +12,15 @@
 
 """Help functions related to system environment."""
 
+from . import __version__, __author__
 
 import os.path
 import sys
 
 
-def appName():
-    """Returns the command that called the application.
-
-    If it's a path, returns only the base name.
+def appName() -> str:
+    """
+    :return: the basename of the command that started the running application.
     """
     if len(sys.argv):
         return os.path.basename(sys.argv[0])

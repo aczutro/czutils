@@ -12,11 +12,14 @@
 
 """A wrapper class for the system logger."""
 
+from . import __version__, __author__
+
 import logging
 
 
 class LogLevel:
-    '''"enum class" for logging levels
+    '''
+    "Enum class" to categorise logging levels.
     '''
     INFO = "INFO"
     WARNING = "WARNING"
@@ -25,21 +28,21 @@ class LogLevel:
 
 
 class LogChannel:
-    """A logging channel that uses the system logger.
+    """
+    A logging channel that uses the system logger.
 
-    The main difference is that it only provides the methods log, warning and
-    error, and that these concatenate all their arguments into one message, like
-    print(...) does.
+    The main difference to the standard logger is that it only provides methods
+    log, warning and error, and that these concatenate all their arguments into
+    one message, like print(...) does.  For example:
 
-    For example:
+    ::
 
-    if not isinstance(someObject, int):
-        channel.error("expected int, but got", someObject)
+        if not isinstance(someObject, int):
+            channel.error("expected int, but got", someObject)
     """
 
     def __init__(self, channelName: str, minLevel: str = LogLevel.WARNING):
-        """Constructor.
-
+        """
         :param channelName: e.g. the application name
         :param minLevel:    minimum logging level.
                             Possible values:
@@ -54,7 +57,8 @@ class LogChannel:
 
 
     def info(self, *args):
-        """Log a message with INFO level.
+        """
+        Logs a message with INFO level.
         """
         self._log(self.logger.info,
                   ' '.join((str(arg) for arg in args)),
@@ -63,7 +67,8 @@ class LogChannel:
 
 
     def warning(self, *args):
-        """Log a message with WARNING level.
+        """
+        Logs a message with WARNING level.
         """
         self._log(self.logger.warning,
                   ' '.join((str(arg) for arg in args)),
@@ -72,7 +77,8 @@ class LogChannel:
 
 
     def error(self, *args):
-        """Log a message with ERROR level.
+        """
+        Logs a message with ERROR level.
         """
         self._log(self.logger.error,
                   ' '.join((str(arg) for arg in args)),
@@ -81,11 +87,12 @@ class LogChannel:
 
 
     def _log(self, f, msg: str, levelName: str):
-        """back-end for logging functions
+        """
+        Back-end for logging functions.
 
-        :param f:         pointer to function to call
+        :param f:         pointer to logging function
         :param msg:       message to log
-        :param levelName: custom level name to use instead of system standard
+        :param levelName: custom level name to appear in message
         """
         f(msg, extra={ "cln" : levelName }) # cln = custom level name
     #_log

@@ -5,21 +5,27 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# See the provided licence file, or http://www.gnu.org/licenses/ .
+# For more details, see the provided licence file or
+# <http://www.gnu.org/licenses>.
 #
 ################################################################### aczutro ###
 
-"""Help functions for code automation."""
+"""Help functions for code generation."""
+
+from . import __version__, __author__
 
 
 def autoStr(cls):
-    """Auto-generates __str__ method for the given class.
+    """
+    Auto-generates __str__ method for the given class.
 
     Use like this:
 
-    @autoStr
-    class MyClass:
-        ...
+    ::
+
+        @autoStr
+        class MyClass:
+            ...
     """
     cls.__str__ = lambda self : \
         "%s { %s }" \

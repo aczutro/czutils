@@ -5,28 +5,32 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# See the provided licence file, or http://www.gnu.org/licenses/ .
+# For more details, see the provided licence file or
+# <http://www.gnu.org/licenses>.
 #
 ################################################################### aczutro ###
 
 """A collection of useful command line utilities and libraries for Python 3."""
 
 __author__ = "Alexander Czutro <github@czutro.ch> <http://alexander.czutro.ch>"
-__version__ = '1.0'
+__version__ = "1.0"
 
 
 from . import hide
 
+
 def mainHide():
-    """Command line utility to hide files
+    """
+    Command line utility to hide files.
     """
     hide.mainHide()
 #hide
 
 
 def mainUhide():
-    """Command line utility to hide files
-    """
+    '''
+    Command line utility to "unhide" files.
+    '''
     hide.mainUhide()
 #hide
 

@@ -5,13 +5,15 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# See the provided licence file, or http://www.gnu.org/licenses/ .
+# For more details, see the provided licence file or
+# <http://www.gnu.org/licenses>.
 #
 ################################################################### aczutro ###
 
 """Library back-end of apps hide and uhide."""
 
-from . import __version__
+from . import __version__, __author__
+
 from .utils import czcode
 from .utils import czlogging
 from .utils import czsystem
