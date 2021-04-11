@@ -10,7 +10,9 @@
 #
 ################################################################### aczutro ###
 
-'''"Private" help classes and functions used by module app.hide.'''
+"""
+"Private" help classes and functions used by module app.hide.
+"""
 
 from . import __version__, __author__
 

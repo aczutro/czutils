@@ -10,10 +10,12 @@
 #
 ################################################################### aczutro ###
 
-"""A collection of useful command line utilities and libraries for Python 3."""
+"""
+A "universal" Python library and collection of useful command line utilities.
+"""
 
-__author__ = "Alexander Czutro <github@czutro.ch> <http://alexander.czutro.ch>"
-__version__ = "1.0"
+__author__ = "Alexander Czutro <github@czutro.ch>"
+__version__ = "1.0.0"
 
 from . import app, utils
 

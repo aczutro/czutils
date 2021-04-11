@@ -17,15 +17,7 @@ from . import __version__, __author__
 
 def autoStr(cls):
     """
-    Auto-generates __str__ method for the given class.
-
-    Use like this:
-
-    ::
-
-        @autoStr
-        class MyClass:
-            ...
+    Decorator: auto-generates __str__ method for the given class.
     """
     cls.__str__ = lambda self : \
         "%s { %s }" \
