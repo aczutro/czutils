@@ -220,7 +220,7 @@ def _execute(files: list, flags: Flags, fWarning, fError) -> int:
     exitCode = 0
 
     for src in files:
-        src.rstrip(os.sep)
+        src = src.rstrip(os.sep)
         directory = os.path.dirname(src)
         filename = os.path.basename(src)
 
@@ -288,7 +288,7 @@ def _mainTemplate(CLPcls):
 
     :param CLPcls: command line parser class
     """
-    L = czlogging.LogChannel(czsystem.appName(), czlogging.LogLevel.INFO)
+    L = czlogging.LogChannel(czsystem.appName())
     try:
         CLP = CLPcls()
         files, flags = CLP.parseCommandLine()
