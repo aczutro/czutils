@@ -15,14 +15,16 @@ For more details, see the provided licence file or
 
 ## Description
 
-This package comprises a Python 3 library with various help functions
-and classes that can make code more compact and easy-to-read.
+This package comprises a Python 3 library with various basic help
+functions and classes, for example for automatic code generation and
+logging.
 
 It also a includes a collection of useful one-task applications for the
 Unix-like command line.  These applications are designed such that
 their core functionality is implemented in the library instead of the
 "main method".  That means that their functionality can easily be 
 integrated into other Python applications.
+
 
 ## The library
 
@@ -37,43 +39,29 @@ czutils
 `-- hide.py : functions to hide/unhide files
 ```
 
+
 ## Applications
 
 ### hide/uhide
 
 These two utilities make sense only on Unix-like systems, where the OS treats
-files whose name starts with a dot as hidden.  `hide` renames all given objects
-(files, directories or symbolic links) in order to hide them. `uhide` unhides
-them.
+files whose name starts with a dot as hidden.  **hide** hides all given 
+objects (files, directories or symbolic links) by prepending a dot to their
+name.  **uhide** "unhides" them by removing the dot.
 
-Both applications accept full paths and are **safe** (i.e. you won't overwrite
-anything by accident).  They also offer options that may sound strange, but
-which can be useful; for example, **copy mode**, the option to "hide" hidden
-files (`'/path/to/.file' -> '/path/to/..file'`), and the options to unhide
-files hidden multiple times only partially (`'/path/to/...file' ->
-'/path/to/..file'`) or fully (`'/path/to/...file' -> '/path/to/file'`).
+For example, `hide path/to/file.txt` does the rename operation
+`path/to/file.txt` --> `path/to/.file.txt`, and `uhide path/to/.file.txt` does
+`path/to/.file.txt` --> `path/to/file.txt`.
 
-For example, assume you want to apply a batch transformation to all images in
-a given directory.  You can make a quick back up (without having to set
-up a Git repository first) with
+Both applications are *safe*, i.e. you won't overwrite anything by accident.
+However, option `-o` allows it if that's what you want.
 
-```shell
-hide -c ./path/to/*.jpg
-```
-
-With this command, each file `./path/to/file.jpg` is copied to
-`./path/to/.file.jpg`.
-
-In the end, if you didn't like the result of the automatic colour correction
-of your newest image manipulation software, simply revert your changes, by
-unhiding your back ups and overriding the files you don't like:
-
-```shell
-uhide -o ./path/to/.*.jpg
-```
-
-With this, each file `./path/to/file.jpg` will be replaced by its backup
-`./path/to/.file.jpg`.
+Finally, there is also a **copy mode**.  For example,
+`hide -c path/to/file.txt` will *copy* the file `path/to/file.txt` to
+`path/to/.file.txt`.  This is useful for the creation of quick back-ups (if
+you don't want to set up a Git repository).  In this example, if you do
+something to file `path/to/file.txt` that you don't like, you can apply the
+back-up with `uhide -o path/to/.file.txt`.
 
 
 ## Installation
@@ -81,22 +69,37 @@ With this, each file `./path/to/file.jpg` will be replaced by its backup
 ### 1. Install the library
 
 Change into the root directory of this distribution (where the files 
-`setup.py` and `setup.cfg` are) and run the following command.  If you
-are not root when you run this command, it will install the library
-locally in your home (and it will be available only to you).
+`setup.py` and `setup.cfg` are) and run the following command:
 
 ```python -m pip install .```
 
-The functionality of the library can be accessed from within the 
-interactive Python console or another Python application with
+(If you are not root when you run this command, it will install the library
+locally in your home, but it will be available only to you.)
+
+After the installation, the functionality of the library can be accessed
+from within the interactive Python console or another Python application
+with
 
 ```python
 import czutils
 ```
 
+Use `help(czutils)` to access the documentation included in the code.
+
 ### 2. "Install" the applications
 
-Copy or move all executables in directory `bin` to any location of
-your preference (ideally one that is in your `PATH` variable).  Make
-sure they are executable, or make them with `chmod +x`.  If you 
-like, you may rename the main executables.
+Copy or move the executables in directory `bin` to any location of
+your preference (ideally one that is in your `PATH` variable).  
+If you like, you may rename them.
+
+
+## Changelog
+
+### Version 1.0: first release
+
+#### Non-breaking additions
+
+* new package **utils** with modules **czcode**, **czlogging** and
+  **czutils**
+* new module **hide**
+* new applications **hide** and **uhide**
