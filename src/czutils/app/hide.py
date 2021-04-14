@@ -10,13 +10,10 @@
 #
 ################################################################### aczutro ###
 
-'''
+"""
 Function to hide and "unhide" files,
 and main routines for applications hide and uhide.
-'''
-
-from . import __version__, __author__
-
+"""
 from ..private.hide import nop, Breaker, Flags, CLPHide, CLPUhide
 
 from ..utils import czlogging
@@ -25,20 +22,13 @@ from ..utils import czsystem
 import shutil
 import os
 import os.path
-
-
-class HideUnhideException(Exception):
-    """
-    Exception raised by function hideUnhide.
-    """
-    pass
-#HideUnhideException
+import sys
 
 
 def hideUnhide(files: list, flags: Flags,
                logChannel: czlogging.LogChannel = None
                ) -> int:
-    '''
+    """
     Hides or "unhides" files, directories and symlinks.
 
     The attributes of the flag collection (all bool) determine the details of
@@ -64,10 +54,9 @@ def hideUnhide(files: list, flags: Flags,
 
     :return: 0 on success, 1 on fail.
 
-    :raise: HideUnhideException.  Uses shutil.copy2, shutil.copytree and
-            os.replace to copy or to rename files.  Exceptions thrown by
-            these functions are caught and re-raised as HideUnhideException.
-    '''
+    :raise: hideUnhide does NOT catch exceptions raised by OS-interacting
+            functions like shutil.copy2, shutil.copytree or os.replace.
+    """
     assert flags.hide is not None
 
     nibbles = []
@@ -152,11 +141,7 @@ def hideUnhide(files: list, flags: Flags,
                 raise Breaker()
             #if
 
-            try:
-                fRename[int(czsystem.isProperDir(src))](src, dst)
-            except Exception as e:
-                raise HideUnhideException(e)
-            #except
+            fRename[int(czsystem.isProperDir(src))](src, dst)
 
             if flags.verbose:
                 print("'%s' -> '%s'" % (src, dst))
@@ -186,12 +171,12 @@ def _mainTemplate(CLPcls):
         files, flags = CLP.parseCommandLine()
         L.info(files)
         L.info(flags)
-        exit(hideUnhide(files, flags, L))
+        sys.exit(hideUnhide(files, flags, L))
     except AssertionError as e:
         raise e
-    except Exception as e: # includes HideUnhideException
+    except Exception as e:
         L.error(e)
-        exit(2)
+        sys.exit(2)
     #except
 #mainHide
 

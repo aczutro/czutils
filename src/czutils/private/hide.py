@@ -13,8 +13,7 @@
 """
 "Private" help classes and functions used by module app.hide.
 """
-
-from . import __version__, __author__
+from . import __version__
 
 from ..utils import czcode
 
@@ -38,7 +37,7 @@ class Breaker(Exception):
 @czcode.autoStr
 class Flags:
     """
-    Data structure that holds all flags needed by hideUnhide(...).
+    Data structure that holds all flags needed by hideUnhide.
     """
     def __init__(self):
         self.hide = None

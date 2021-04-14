@@ -15,5 +15,6 @@
 from .. import __version__, __author__
 
 from .hide import mainHide, mainUhide
+from .czmake import main as mainCZMake
 
 ### aczutro ###################################################################

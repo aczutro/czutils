@@ -12,8 +12,6 @@
 
 """A wrapper class for the system logger."""
 
-from . import __version__, __author__
-
 import logging
 
 

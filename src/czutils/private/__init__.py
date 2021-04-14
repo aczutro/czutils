@@ -11,7 +11,7 @@
 ################################################################### aczutro ###
 
 """
-"Private" help classes and functions used by the library's application package.
+"Private" help classes and functions used by the application package.
 """
 
 from .. import __version__, __author__

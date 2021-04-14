@@ -12,8 +12,6 @@
 
 """Help functions related to the system (including OS)."""
 
-from . import __version__, __author__
-
 import os.path
 import sys
 

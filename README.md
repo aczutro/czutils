@@ -38,6 +38,7 @@ czutils
 |   |-- czlogging.py   : a custom wrapper class for the system logger
 |   `-- czsystem.py    : help functions related to the system
 |-- app              : APPLICATION PACKAGE
+|   |-- czmake.py      : function to create Makefiles
 |   `-- hide.py        : functions to hide/unhide files
 `-- private          : PRIVATE PACKAGE
 ```
@@ -78,6 +79,20 @@ example, if you do something to file `path/to/file.txt` that you don't
 like, you can revert the changes by copying the hidden back-up back to
 the original file: `uhide -o path/to/.file.txt`.
 
+### czmake
+
+Reads a  plain list of shell  commands either from file  or from STDIN
+and  creates a  `Makefile`  in  which each  command  is an  individual
+target.
+
+All targets are invoked by the *all* target, so a call to `make [all]`
+will execute all  commands and create an individual log  file for each
+command.   The `Makefile`  is formulated  such that  a second  call to
+`make` will execute only the commands that failed the first time.
+
+The `Makefile`  also includes  a *clean* target  that will  remove the
+original input file, the `Makefile` itself, and all the log files.
+
 
 ## Installation
 
@@ -107,6 +122,7 @@ Pip will also install the following executable scripts:
 
 * `hide`
 * `uhide`
+* `czmake`
 
 If you  are not root when  you run the installation  command, Pip will
 install the library and executables locally in your home.
@@ -137,7 +153,13 @@ pip uninstall czutils
 
 #### Non-breaking additions
 
-* new package **utils** with modules **czcode**, **czlogging** and
-  **czutils**
-* new module **hide**
+* new modules **utils.czcode**, **utils.czlogging** and **utils.czutils**
+* new module **app.hide**
 * new application scripts **hide** and **uhide**
+
+### Version 1.0.1
+
+#### Non-breaking additions
+
+* new module **app.czmake**
+* new application script **czmake**

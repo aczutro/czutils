@@ -12,8 +12,6 @@
 
 """Help functions for code generation."""
 
-from . import __version__, __author__
-
 
 def autoStr(cls):
     """
