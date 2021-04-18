@@ -157,7 +157,7 @@ pip uninstall czutils
 * new module **app.hide**
 * new application scripts **hide** and **uhide**
 
-### Version 1.0.1
+### Version 1.1.0
 
 #### Non-breaking additions
 
