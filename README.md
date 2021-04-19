@@ -35,8 +35,11 @@ The library has the following structure:
 czutils
 |-- utils            : BASIC LIBRARY PACKAGE
 |   |-- czcode.py      : help functions for code automation
+|   |-- cziterable.py  : generic functions to search in iterables
 |   |-- czlogging.py   : a custom wrapper class for the system logger
-|   `-- czsystem.py    : help functions related to the system
+|   |-- czstring.py    : string functions
+|   |-- czsystem.py    : help functions related to the system
+|   `-- cztime.py      : an easy-to-use timer
 |-- app              : APPLICATION PACKAGE
 |   |-- czmake.py      : function to create Makefiles
 |   `-- hide.py        : functions to hide/unhide files
@@ -93,10 +96,15 @@ command.   The `Makefile`  is formulated  such that  a second  call to
 The `Makefile`  also includes  a *clean* target  that will  remove the
 original input file, the `Makefile` itself, and all the log files.
 
+### fill
+
+Reads text from STDIN, reformats it (line wrapping and alignment) and
+writes the reformatted text to STDOUT.
+
 
 ## Installation
 
-### The quick and dirty way
+### The quick way
 
 Change into  the root directory  of this distribution (where  the file
 `pyproject.toml` is) and run the following command:
@@ -153,7 +161,8 @@ pip uninstall czutils
 
 #### Non-breaking additions
 
-* new modules **utils.czcode**, **utils.czlogging** and **utils.czutils**
+* new modules **utils.czcode**, **utils.czlogging** and
+  **utils.czutils**
 * new module **app.hide**
 * new application scripts **hide** and **uhide**
 
@@ -163,3 +172,16 @@ pip uninstall czutils
 
 * new module **app.czmake**
 * new application script **czmake**
+
+### Version 1.2.0
+
+#### Non-breaking additions
+
+* new modules **utils.cziterable**, **utils.czstring** and 
+  **utils.cztime**
+* new module **app.fill**
+* new application script **fill**
+
+#### Non-breaking changes
+
+* **czmake** now reads from STDIN also if no '-' is given. 

@@ -16,4 +16,6 @@
 
 from .. import __version__, __author__
 
+__versionString__ = "%%(prog)s %s (%s)" % (__version__, __author__)
+
 ### aczutro ###################################################################

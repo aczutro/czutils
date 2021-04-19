@@ -10,7 +10,7 @@
 #
 ################################################################### aczutro ###
 
-"""Timers and time helpers."""
+"""An easy-to-use timer."""
 
 import time
 

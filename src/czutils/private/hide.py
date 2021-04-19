@@ -13,7 +13,7 @@
 """
 "Private" help classes and functions for module app.hide.
 """
-from . import __version__
+from . import __versionString__
 
 from ..utils import czcode
 
@@ -78,10 +78,9 @@ class CommandLineParser:
         """
         P = argparse.ArgumentParser(description=self.appDescription,
                                     add_help=True)
-        versionString = "%%(prog)s %s" % __version__
         P.add_argument("--version",
                        action="version",
-                       version=versionString
+                       version=__versionString__
                        )
         P.add_argument("FILE",
                        type=str,

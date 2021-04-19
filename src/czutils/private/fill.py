@@ -13,7 +13,7 @@
 """
 "Private" help classes and functions used by module app.fill.
 """
-from . import __version__
+from . import __versionString__
 
 from ..utils import czcode
 
@@ -52,10 +52,9 @@ class CommandLineParser:
         """
         P = argparse.ArgumentParser(description=self.appDescription,
                                     add_help=True)
-        versionString = "%%(prog)s %s" % __version__
         P.add_argument("--version",
                        action="version",
-                       version=versionString
+                       version=__versionString__
                        )
         G1 = P.add_argument_group("actions")
         G1 = G1.add_mutually_exclusive_group()
