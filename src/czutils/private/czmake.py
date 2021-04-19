@@ -11,7 +11,7 @@
 ################################################################### aczutro ###
 
 """
-"Private" help classes and functions used by module app.czmake.
+"Private" help classes and functions for module app.czmake.
 """
 from . import __version__
 
@@ -21,9 +21,9 @@ import argparse
 
 
 @czcode.autoStr
-class Inputs:
+class Args:
     """
-    Data structure that holds all arguments and flags needed by czmake.
+    Bundles all inputs for app.czmake.czmake.
     """
     def __init__(self):
         self.inputFile = None
@@ -40,11 +40,11 @@ class CommandLineParser:
         self.appDescription = "Turns a plain list of commands into a Makefile."
     # __init__
 
-    def parseCommandLine(self) -> Inputs:
+    def parseCommandLine(self) -> Args:
         """
         Parses command line.
 
-        :return: name of input file
+        :returns: All arguments and flags bundled in an Args object.
         """
         P = argparse.ArgumentParser(description=self.appDescription,
                                     add_help=True)
@@ -55,10 +55,11 @@ class CommandLineParser:
                        )
         P.add_argument("INPUT_FILE",
                        type=str,
+                       nargs='?',
                        help="File with a plain list of commands to execute. "
                             "Each line is understood as a command. "
                             "Lines starting with # are regarded as comments. "
-                            "If INPUT_FILE is '-', reads from STDIN."
+                            "If INPUT_FILE is '-' or missing, reads from STDIN."
                        )
         G1 = P.add_argument_group()
         G1.add_argument("-l",
@@ -82,8 +83,12 @@ class CommandLineParser:
                         )
         container = P.parse_args()
 
-        ans = Inputs()
-        ans.inputFile = container.INPUT_FILE
+        ans = Args()
+        if container.INPUT_FILE is None:
+            ans.inputFile = "-"
+        else:
+            ans.inputFile = container.INPUT_FILE
+        #else
         ans.targetDir = container.LOG_DIR
         ans.overwrite = container.overwrite
         ans.preserve = container.preserve
