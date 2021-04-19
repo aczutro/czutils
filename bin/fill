@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+#
 # Copyright (C) 2005 - present  Alexander Czutro <github@czutro.ch>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,12 +12,10 @@
 #
 ################################################################### aczutro ###
 
-"""Application package."""
+import czutils.app
 
-from .. import __version__, __author__
-
-from .hide import mainHide, mainUhide
-from .czmake import main as mainCZMake
-from .fill import main as mainFill
+if __name__ == '__main__':
+    czutils.app.mainFill()
+#if
 
 ### aczutro ###################################################################
