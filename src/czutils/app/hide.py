@@ -14,7 +14,7 @@
 Function to hide and "unhide" files,
 and main routines for applications hide and uhide.
 """
-from ..private.hide import nop, Breaker, Flags, CLPHide, CLPUhide
+from ..private.hide import Args, Breaker, CLPHide, CLPUhide, nop
 
 from ..utils import czlogging
 from ..utils import czsystem
@@ -25,47 +25,50 @@ import os.path
 import sys
 
 
-def hideUnhide(files: list, flags: Flags,
-               logChannel: czlogging.LogChannel = None
-               ) -> int:
+def hideUnhide(args: Args, logChannel: czlogging.LogChannel = None) -> int:
     """
     Hides or "unhides" files, directories and symlinks.
 
-    The attributes of the flag collection (all bool) determine the details of
-    the process:
+    The attributes of 'args' are interpreted as follows:
 
-      - flags.hide:        If true, hide files.  If false, unhide them.
-      - flags.copy:        If true, instead of renaming the file,
-                           make a hidden/unhidden copy.
-      - flags.strict:      In hide mode: If true, refuse to "hide hidden files".
-                                         (If false, hiding ".file" means
-                                         renaming it to "..file".)
-                           In unhide mode: If true, "completely unhide" files,
-                                           i.e. "..file" becomes "file".
-                                           (If false, "..file" becomes ".file".)
-      - flags.abort:       If true, abort on first failure.
-      - flags.noOverwrite: If false, silently overwrite target files
-                           (but not directories).
-      - flags.verbose:     If true, be verbose (printed on sys.stdout).
+      - args.files:       List of strings: each string is a path to a file,
+                          directory or symlink.
+      - args.hide:        If true, hides files.  If false, unhides them.
+      - args.copy:        If true, instead of renaming the file,
+                          makes a hidden/unhidden copy.
+      - args.strict:      In hide mode: If true, refuses to "hide hidden files".
+                                        (If false, hiding ".file" means
+                                        renaming it to "..file".)
+                          In unhide mode: If true, "completely unhides" files,
+                                          i.e. "..file" becomes "file".
+                                          (If false, "..file" becomes ".file".)
+      - args.abort:       If true, aborts on first failure.
+      - args.noOverwrite: If false, silently overwrite target files
+                          (but not directories).
+      - args.verbose:     If true, prints executed rename/copy operations to
+                          sys.stdout.
 
-    :param files:      list of files to hide or unhide
-    :param flags:      collection of flags that control the process
-    :param logChannel: a log channel for warnings and errors (optional)
+    :param args:       data collection with all necessary input arguments.
+    :param logChannel: a log channel for warnings and errors (optional).
 
-    :return: 0 on success, 1 on fail.
+    :return: 0 on success, 1 on fail.  Fail means that at least one rename/copy
+             operation has failed.
 
-    :raise: hideUnhide does NOT catch exceptions raised by OS-interacting
-            functions like shutil.copy2, shutil.copytree or os.replace.
+    :raises: ValueError
+    :raises: hideUnhide does NOT catch exceptions raised by OS-interacting
+             functions like shutil.copy2, shutil.copytree or os.replace.
     """
-    assert flags.hide is not None
+    if args.hide is None:
+        raise ValueError("'args.hide' must not be None")
+    #if
 
     nibbles = []
-    if flags.hide:
+    if args.hide:
         nibbles.append('already') # [0]
     else:
         nibbles.append('not') # [0]
     #else
-    if flags.abort:
+    if args.abort:
         if logChannel is None:
             fComplain = nop
         else:
@@ -83,7 +86,7 @@ def hideUnhide(files: list, flags: Flags,
         nibbles.append(lambda x: "-- skipping '%s'" % x) # [2]
     #else
 
-    if flags.copy:
+    if args.copy:
         fRename = (lambda _src, _dst: shutil.copy2(_src, _dst, follow_symlinks=False),
                    lambda _src, _dst: shutil.copytree(_src, _dst, symlinks=True,
                                                       ignore_dangling_symlinks=True)
@@ -96,7 +99,7 @@ def hideUnhide(files: list, flags: Flags,
 
     exitCode = 0
 
-    for src in files:
+    for src in args.files:
         src = src.rstrip(os.sep)
         directory = os.path.dirname(src)
         filename = os.path.basename(src)
@@ -116,13 +119,13 @@ def hideUnhide(files: list, flags: Flags,
             #if
 
             newName = None
-            if flags.hide:
-                if filename[0] != '.' or not flags.strict:
+            if args.hide:
+                if filename[0] != '.' or not args.strict:
                     newName = '.' + filename
                 #if
             else:
                 if filename[0] == '.':
-                    if flags.strict:
+                    if args.strict:
                         newName = filename.strip('.')
                     else:
                         newName = filename[1:]
@@ -136,18 +139,18 @@ def hideUnhide(files: list, flags: Flags,
 
             dst = os.path.join(directory, newName)
             if os.path.exists(dst) and\
-                    (flags.noOverwrite or czsystem.isProperDir(dst)):
+                    (args.noOverwrite or czsystem.isProperDir(dst)):
                 fComplain("destination '%s' already exists" % dst, nibbles[2](src))
                 raise Breaker()
             #if
 
             fRename[int(czsystem.isProperDir(src))](src, dst)
 
-            if flags.verbose:
+            if args.verbose:
                 print("'%s' -> '%s'" % (src, dst))
             #if
         except Breaker:
-            if flags.abort:
+            if args.abort:
                 return 1
             else:
                 exitCode = 1
@@ -168,10 +171,9 @@ def _mainTemplate(CLPcls):
     L = czlogging.LogChannel(czsystem.appName())
     try:
         CLP = CLPcls()
-        files, flags = CLP.parseCommandLine()
-        L.info(files)
-        L.info(flags)
-        sys.exit(hideUnhide(files, flags, L))
+        args = CLP.parseCommandLine()
+        L.info(args)
+        sys.exit(hideUnhide(args, L))
     except AssertionError as e:
         raise e
     except Exception as e:

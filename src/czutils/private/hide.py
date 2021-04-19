@@ -11,7 +11,7 @@
 ################################################################### aczutro ###
 
 """
-"Private" help classes and functions used by module app.hide.
+"Private" help classes and functions for module app.hide.
 """
 from . import __version__
 
@@ -35,11 +35,12 @@ class Breaker(Exception):
 
 
 @czcode.autoStr
-class Flags:
+class Args:
     """
-    Data structure that holds all flags needed by hideUnhide.
+    Bundles all inputs for app.hide.hideUnhide.
     """
     def __init__(self):
+        self.files = []
         self.hide = None
         self.copy = False
         self.strict = False
@@ -54,6 +55,7 @@ class CommandLineParser:
     """
     Base class for command line parsing.
     """
+
     def __init__(self):
         self.hideMode = None
         self.appDescription = ""
@@ -67,11 +69,12 @@ class CommandLineParser:
         self.helpVerbose = "Be verbose."
     # __init__
 
-    def parseCommandLine(self):
+
+    def parseCommandLine(self) -> Args:
         """
         Parses command line.
 
-        :return: tuple: ( list of files, Flags object )
+        :returns: All arguments and flags bundled in an Args object.
         """
         P = argparse.ArgumentParser(description=self.appDescription,
                                     add_help=True)
@@ -113,15 +116,16 @@ class CommandLineParser:
 
         container = P.parse_args()
 
-        flags = Flags()
-        flags.hide = self.hideMode
-        flags.copy = container.copy
-        flags.strict = container.strict
-        flags.abort = container.abort
-        flags.noOverwrite = container.noOverwrite
-        flags.verbose = container.verbose
+        ans = Args()
+        ans.files = container.FILE
+        ans.hide = self.hideMode
+        ans.copy = container.copy
+        ans.strict = container.strict
+        ans.abort = container.abort
+        ans.noOverwrite = container.noOverwrite
+        ans.verbose = container.verbose
 
-        return container.FILE, flags
+        return ans
 
     #def parse_args
 
