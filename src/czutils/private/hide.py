@@ -15,8 +15,6 @@
 """
 from . import __versionString__
 
-from ..utils import czcode
-
 import argparse
 
 
@@ -32,23 +30,6 @@ class Breaker(Exception):
     """
     pass
 #Breaker
-
-
-@czcode.autoStr
-class Args:
-    """
-    Bundles all inputs for app.hide.hideUnhide.
-    """
-    def __init__(self):
-        self.files = []
-        self.hide = None
-        self.copy = False
-        self.strict = False
-        self.abort = False
-        self.noOverwrite = False
-        self.verbose = False
-    # __init__
-#Flags
 
 
 class CommandLineParser:
@@ -70,7 +51,7 @@ class CommandLineParser:
     # __init__
 
 
-    def parseCommandLine(self) -> Args:
+    def parseCommandLine(self) -> argparse.Namespace:
         """
         Parses command line.
 
@@ -82,7 +63,8 @@ class CommandLineParser:
                        action="version",
                        version=__versionString__
                        )
-        P.add_argument("FILE",
+        P.add_argument("files",
+                       metavar='FILE',
                        type=str,
                        nargs='+',
                        help=self.helpArgs
@@ -114,17 +96,9 @@ class CommandLineParser:
                        )
 
         container = P.parse_args()
+        setattr(container, "hide", self.hideMode)
 
-        ans = Args()
-        ans.files = container.FILE
-        ans.hide = self.hideMode
-        ans.copy = container.copy
-        ans.strict = container.strict
-        ans.abort = container.abort
-        ans.noOverwrite = container.noOverwrite
-        ans.verbose = container.verbose
-
-        return ans
+        return container
 
     #def parse_args
 
