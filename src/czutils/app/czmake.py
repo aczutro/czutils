@@ -13,7 +13,7 @@
 """
 Turns a plain list of commands into a Makefile.
 """
-from ..private.czmake import Args, CommandLineParser
+from ..private.czmake import CommandLineParser
 
 from ..utils import czlogging
 from ..utils import czsystem
@@ -30,7 +30,10 @@ class CZMakeError(Exception):
 #CZMakeError
 
 
-def czmake(args: Args) -> int:
+def czmake(inputFile: str = None,
+           targetDir: str = ".",
+           overwrite: bool = False,
+           preserve: bool = False) -> int:
     """
     Reads a plain list of shell commands either from file or from sys.stdin
     and creates a 'Makefile' in which each command is an individual target.
@@ -46,52 +49,49 @@ def czmake(args: Args) -> int:
     Each input line is interpreted as an individual command.
     Lines starting with # are regarded as comments.
 
-    The attributes of 'args' are interpreted as follows:
-
-      - args.inputFile: str:  Path to file containing shell commands.
-                              If it is '-', reads from sys.stdin.
-      - args.targetDir: str:  Path to directory where log files are to be
-                              stored.  If file or directory with that name
-                              already exists, raises CZMakeError.
-      - args.overwrite: bool: If true, overwrites file 'Makefile' silently.
-                              If false and 'Makefile' already exists,
-                              raises CZMakeError.
-      - args.preserve: bool:  If true, preserves input file, i.e. 'make clean'
-                              will not delete it.
-
-    :param args: data collection with all necessary input arguments.
+    :param inputFile: Path to file containing shell commands.
+                      If it is None, reads from sys.stdin.
+    :param targetDir: Path to directory where target and log files are to be
+                      stored.  If a file or directory with that name already
+                      exists, raises CZMakeError.
+    :param overwrite: If true, overwrites file 'Makefile' silently.
+                        If false and 'Makefile' already exists,
+                      raises CZMakeError.
+                        Does not apply to 'targetDir'.
+    :param preserve:  If true, preserves input file, i.e. 'make clean' will not
+                      delete it.
 
     :returns: 0 on success.
 
-    :raises: CZMakeException when flow errors arise from values in 'args'.
+    :raises: CZMakeError
     :raises: czmake does NOT catch exceptions raised by OS-interacting functions
              like os.mkdir or io.open.
     """
 
-    if args.inputFile == "-":
-        args.inputFile = ""
+    if inputFile is None:
+        inputFile = ""
         commands = sys.stdin.read().splitlines()
     else:
-        with open(args.inputFile, "r") as fileHandle:
+        with open(inputFile, "r") as fileHandle:
             commands = fileHandle.read().splitlines()
         #with
     #else
 
-    if args.preserve:
-        args.inputFile = ""
-    #if
-
-    if os.path.exists(args.targetDir):
-        raise CZMakeError("can't create logs dir '%s': "
-                          "file/directory already exists" % args.targetDir)
+    if preserve:
+        inputFile = ""
     #if
 
     makefile = "Makefile"
-    if os.path.exists(makefile) and not args.overwrite:
-        raise CZMakeError("Use '-o' if you want to overwrite '%s'." % makefile)
+    if os.path.exists(makefile) and not overwrite:
+        raise CZMakeError("Can't overwrite '%s'." % makefile)
     #if
 
-    os.mkdir(args.targetDir)
+    if not os.path.exists(targetDir):
+        os.mkdir(targetDir)
+    elif not os.path.isdir(targetDir):
+        raise CZMakeError("can't create log file directory '%s': "
+                          "a non-directory with that name already exists" % targetDir)
+    #if
 
     with open(makefile, "w") as makefileHandle:
         write = lambda msg : print(msg, file=makefileHandle)
@@ -100,6 +100,7 @@ def czmake(args: Args) -> int:
         write("")
 
         targets = []
+        logs = []
 
         targetCounter = 1
         for command in commands:
@@ -109,10 +110,11 @@ def czmake(args: Args) -> int:
                 continue
             #if
 
-            target = os.path.join(args.targetDir, "%03d" % targetCounter)
+            target = os.path.join(targetDir, "%03d" % targetCounter)
             targets.append(target)
 
             log = target + ".log"
+            logs.append(log)
 
             write("%s:" % target)
             write("\t(%s && touch %s) 2>&1 | tee %s" % (command, target, log))
@@ -121,12 +123,16 @@ def czmake(args: Args) -> int:
             targetCounter += 1
         #for
 
+        if os.path.samefile(targetDir, os.getcwd()):
+            targetDir = ' '.join(targets + logs)
+        #if
+
         write("all: %s" % " ".join(targets))
         write("")
         write(".PHONY: clean")
         write("")
         write("clean:")
-        write("\trm -rf %s %s %s" % (args.targetDir, args.inputFile, makefile))
+        write("\trm -rf %s %s %s" % (targetDir, inputFile, makefile))
     #with
 
     return 0
@@ -142,7 +148,11 @@ def main():
         CLP = CommandLineParser()
         args = CLP.parseCommandLine()
         L.info(args)
-        sys.exit(czmake(args))
+        sys.exit(czmake(inputFile=args.inputFile,
+                        targetDir=args.logDir,
+                        overwrite=args.overwrite,
+                        preserve=args.preserve
+                        ))
     except AssertionError as e:
         raise e
     except CZMakeError as e:

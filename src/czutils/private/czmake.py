@@ -15,32 +15,18 @@
 """
 from . import __versionString__
 
-from ..utils import czcode
-
 import argparse
-
-
-@czcode.autoStr
-class Args:
-    """
-    Bundles all inputs for app.czmake.czmake.
-    """
-    def __init__(self):
-        self.inputFile = None
-        self.targetDir = False
-        self.overwrite = False
-        self.preserve = False
-    # __init__
-#Inputs
 
 
 class CommandLineParser:
 
     def __init__(self):
-        self.appDescription = "Turns a plain list of commands into a Makefile."
+        self.appDescription = "Turns a plain list of commands into a Makefile. "\
+                              "Each line is understood as a command. "\
+                              "Lines starting with # are regarded as comments. "
     # __init__
 
-    def parseCommandLine(self) -> Args:
+    def parseCommandLine(self) -> argparse.Namespace:
         """
         Parses command line.
 
@@ -52,17 +38,17 @@ class CommandLineParser:
                        action="version",
                        version=__versionString__
                        )
-        P.add_argument("INPUT_FILE",
+        P.add_argument("inputFile",
+                       metavar="INPUT_FILE",
                        type=str,
                        nargs='?',
                        help="File with a plain list of commands to execute. "
-                            "Each line is understood as a command. "
-                            "Lines starting with # are regarded as comments. "
-                            "If INPUT_FILE is '-' or missing, reads from STDIN."
+                            "If '-' or omitted, reads from STDIN."
                        )
         G1 = P.add_argument_group()
         G1.add_argument("-l",
-                        dest="LOG_DIR",
+                        metavar="LOG_DIR",
+                        dest="logDir",
                         type=str,
                         default=".targets",
                         help="Store log files in this directory. "
@@ -82,17 +68,11 @@ class CommandLineParser:
                         )
         container = P.parse_args()
 
-        ans = Args()
-        if container.INPUT_FILE is None:
-            ans.inputFile = "-"
-        else:
-            ans.inputFile = container.INPUT_FILE
-        #else
-        ans.targetDir = container.LOG_DIR
-        ans.overwrite = container.overwrite
-        ans.preserve = container.preserve
+        if container.inputFile is '-':
+            container.inputFile = None
+        #if
 
-        return ans
+        return container
 
     #def parse_args
 
