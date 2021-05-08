@@ -22,11 +22,11 @@ class TimerType:
     WALLCLOCK, CPU = range(2)
 
     @staticmethod
-    def invalid(type):
+    def invalid(timerType):
         """
-        :returns: True if 'type' is not TimerType.WALLCLOCK or TimerType.CPU.
+        :returns: True if 'timerType' is not TimerType.WALLCLOCK or TimerType.CPU.
         """
-        return type not in range(2)
+        return timerType not in range(2)
     #invalid
 
 #TimerType
@@ -50,32 +50,35 @@ class TimerResolution:
 #TimerResolution
 
 
-class Timer():
+class Timer:
     """
     An easy-to-use timer.
     """
 
     def __init__(self,
-                 type: TimerType = TimerType.CPU,
+                 timerType: TimerType = TimerType.CPU,
                  res: TimerResolution = TimerResolution.S):
         """
-        :param type: If TimerType.WALLCLOCK, measured time is wall clock time.
-                     If TimerType.CPU, measured time is CPU time.
-        :param res:  If TimerResolution.NS, measured time is in NANOSECONDS
-                     (int).
-                     If TimerResolution.S, measured time is in SECONDS (float).
+        :param timerType: If TimerType.WALLCLOCK, measured time is wall clock
+                          time.
+                          If TimerType.CPU, measured time is CPU time.
+
+        :param res:       If TimerResolution.NS, measured time is in NANOSECONDS
+                          (int).
+                          If TimerResolution.S, measured time is in SECONDS
+                          (float).
         """
-        if (type, res) == (TimerType.WALLCLOCK, TimerResolution.S):
+        if (timerType, res) == (TimerType.WALLCLOCK, TimerResolution.S):
             self.f = time.time
-        elif (type, res) == (TimerType.WALLCLOCK, TimerResolution.NS):
+        elif (timerType, res) == (TimerType.WALLCLOCK, TimerResolution.NS):
             self.f = time.time_ns
-        elif (type, res) == (TimerType.CPU, TimerResolution.S):
+        elif (timerType, res) == (TimerType.CPU, TimerResolution.S):
             self.f = time.process_time
-        elif (type, res) == (TimerType.CPU, TimerResolution.NS):
+        elif (timerType, res) == (TimerType.CPU, TimerResolution.NS):
             self.f = time.process_time_ns
-        elif TimerType.invalid(type):
+        elif TimerType.invalid(timerType):
             raise ValueError(
-                "'type' must be TimerType.WALLCLOCK or TimerType.CPU")
+                "'timerType' must be TimerType.WALLCLOCK or TimerType.CPU")
         else:
             raise ValueError(
                 "'res' must be TimerResolution.NS or TimerResolution.S")
