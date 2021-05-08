@@ -16,9 +16,9 @@ import logging
 
 
 class LogLevel:
-    '''
-    "Enum class" to categorise logging levels.
-    '''
+    """
+    IDs for logging levels.
+    """
     INFO = "INFO"
     WARNING = "WARNING"
     ERROR = "ERROR"
