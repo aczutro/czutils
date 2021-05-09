@@ -15,7 +15,7 @@
 import czutils.app
 
 if __name__ == '__main__':
-    czutils.app.mainFill()
+    czutils.app.mainDemo()
 #if
 
 ### aczutro ###################################################################

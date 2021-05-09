@@ -14,6 +14,7 @@
 
 from .. import __version__, __author__
 
+from .demo import main as mainDemo
 from .hide import mainHide, mainUhide
 from .czmake import main as mainCZMake
 from .textformat import main as mainTextFormat

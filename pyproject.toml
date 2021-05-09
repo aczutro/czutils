@@ -29,6 +29,7 @@ hide = "czutils.app:mainHide"
 uhide = "czutils.app:mainUhide"
 czmake = "czutils.app:mainCZMake"
 fill = "czutils.app:mainFill"
+czutils-demo = "czutils.app:mainDemo"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
