@@ -281,8 +281,8 @@ def main():
     """
     Main routine for command-line app 'czutils-demo'.
     """
-    P = argparse.ArgumentParser(description="Demo application to illustrate the"
-                                            " capabilities of library czutils.",
+    P = argparse.ArgumentParser(description="Demo application to illustrate the "
+                                            "capabilities of library czutils.",
                                 add_help=True)
     P.add_argument("--version",
                    action="version",

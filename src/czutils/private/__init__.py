@@ -14,8 +14,8 @@
 "Private" help classes and functions used by the application package.
 """
 
-from .. import __version__, __author__
+from .. import __version__
 
-__versionString__ = "%%(prog)s %s (%s)" % (__version__, __author__)
+__versionString__ = "czutils version %s" % __version__
 
 ### aczutro ###################################################################

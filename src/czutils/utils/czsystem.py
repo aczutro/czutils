@@ -10,7 +10,7 @@
 #
 ################################################################### aczutro ###
 
-"""Help functions related to the system (including OS)."""
+"""Help functions related to the (operating) system."""
 
 import os.path
 import sys

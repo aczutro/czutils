@@ -16,91 +16,57 @@ For more details, see the provided licence file or
 
 ## Description
 
-This  package  comprises a  Python  library  with various  basic  help
-functions and classes,  for example for automatic  code generation and
-logging.
-
-It also  a includes a  collection of useful one-task  applications for
-the Unix-like command line.  These applications are designed such that
-their core functionality is implemented  in the library instead of the
-"main  method".  That  means that  their functionality  can easily  be
-integrated into other Python applications.
+This package  comprises a "universal"  Python library meant  to extend
+the  Python Standard  Library.  In  addition,  it comprises  a set  of
+command-line  utilities created  according to  the Unix  philosophy of
+having a  small separate utility for  each task.  Each utility  can do
+only  one thing,  but it  does that  one thing  well and  efficiently.
+These are  handy helpers for people  who prefer to manage  their files
+using the command line instead of a graphical front-end.
 
 
-## The library
+### The universal library
 
-The library has the following structure:
+The **universal  library** is implemented in  Subpackage `utils`.  The
+following modules are currently available:
 
-```
-czutils
-|-- utils            : BASIC LIBRARY PACKAGE
-|   |-- czcode.py      : help functions for code automation
-|   |-- cziterable.py  : generic functions to search in iterables
-|   |-- czlogging.py   : a custom wrapper class for the system logger
-|   |-- czstring.py    : string functions
-|   |-- czsystem.py    : help functions related to the system
-|   `-- cztime.py      : an easy-to-use timer
-|-- app              : APPLICATION PACKAGE
-|   |-- czmake.py      : function to create Makefiles
-|   `-- hide.py        : functions to hide/unhide files
-`-- private          : PRIVATE PACKAGE
-```
+|              |                                                                           |
+|-------------:|:--------------------------------------------------------------------------|
+| `czcode`     | Help functions for code generation.                                       |
+| `cziterable` | Generic functions to search in iterables.                                 |
+| `czlogging`  | A wrapper class for the system logger.                                    |
+| `czoutline`  | A document formatter for text displayed on a monospace-text-based medium. |
+| `czsystem`   | Help functions related to the (operating) system.                         |
+| `cztext`     | Functions to format long texts and to colourise strings.                  |
+| `cztime`     | An easy-to-use timer.                                                     |
 
-The **basic  library package**  is the main  "public" library.   It is
-intended for the integration into other libraries and applications.
+The  command-line  application  `czutils-demo`  provides  examples  of
+usage.   In addition,  all functions  and classes  that belong  to the
+public interface include detailed docstrings.
 
-The **application  package** comprises  the functionality  that powers
-the  command  line  applications.   That  functionality  can  also  be
-integrated into external applications or libraries.
+### The application library
 
-The **private package** comprises help functions and classes needed by
-the application  package.  It  is not intended  for public  use.  (But
-you're welcome to browse what's in there.)
+The **application  library** is implemented in  Subpackage `app`.  The
+functionality  of each  command-line application  is implemented  in a
+module of  its own, so that  it can be integrated  directly into other
+Python applications without having to use it as an external process.
 
+The following  table lists the currently  available applications.  The
+first column lists the application names for command-line use, and the
+second  column lists  the  corresponding module  for integration  into
+Python applications.
 
-## The command line applications
+|                |              |                                                            |
+|---------------:|-------------:|:-----------------------------------------------------------|
+| `czutils-demo` | `demo`       | Demo application to illustrate the library's capabilities. |
+| `czmake`       | `czmake`     | Turns a plain list of commands into a Makefile.            |
+| `hide`         | `hide`       | Hides files (prepends a dot to their names).               |
+| `uhide`        | `hide`       | "Unhides" files (removes leading dots from their names).   |
+| `textformat`   | `textformat` | Formats text-based documents for display on the terminal.  |
 
-### hide/uhide
-
-These two  utilities are  for Unix-like  operating systems.   Such OSs
-treat files  whose name starts with  a dot as hidden.   **hide** hides
-given  files, directories  or symbolic  links by  prepending a  dot to
-their name.  **uhide** "unhides" them by removing the dot.
-
-For  example, `hide  path/to/file.txt` executes  the rename  operation
-`path/to/file.txt` --> `path/to/.file.txt`, and `uhide
-path/to/.file.txt` does `path/to/.file.txt` --> `path/to/file.txt`.
-
-Both applications  are *safe*,  i.e. you  won't overwrite  anything by
-accident.  However, option `-o` allows it if that's what you want.
-
-Finally,  there  is also  a  **copy  mode**.   For example,  `hide  -c
-path/to/file.txt`   will  *copy*   the   file  `path/to/file.txt`   to
-`path/to/.file.txt`.   This  is  useful  for  the  creation  of  quick
-back-ups (if  you don't  want to  set up a  Git repository).   In this
-example, if you do something to file `path/to/file.txt` that you don't
-like, you can revert the changes by copying the hidden back-up back to
-the original file: `uhide -o path/to/.file.txt`.
-
-### czmake
-
-Reads a  plain list of shell  commands either from file  or from STDIN
-and  creates a  `Makefile`  in  which each  command  is an  individual
-target.
-
-All targets are invoked by the *all* target, so a call to `make [all]`
-will execute all  commands and create an individual log  file for each
-command.   The `Makefile`  is formulated  such that  a second  call to
-`make` will execute only the commands that failed the first time.
-
-The `Makefile`  also includes  a *clean* target  that will  remove the
-original input file, the `Makefile` itself, and all the log files.
-
-### fill
-
-Reads text from STDIN, reformats it (line wrapping and alignment) and
-writes the reformatted text to STDOUT.
-
+All applications provide  help when invoked  with the `--help` option.
+Some also provide a `--long-help` option which produces output similar
+to a manpage.
 
 ## Installation
 
@@ -118,21 +84,18 @@ will  find it,  independently of  which directory  you're in  when you
 invoke python.
 
 To access the functionality of the library from within the interactive
-Python console or another Python application, import it with
+Python console or from another Python application, import it with
 
 ```python
 import czutils
 ```
 
-and read the documentation with `help(czutils)`.
+Documentation can be accessed with `help(czutils)`.
 
-Pip will also install the following executable scripts:
+Pip  will   also  install  the   executable  scripts  listed   in  the
+*application library* table.
 
-* `hide`
-* `uhide`
-* `czmake`
-
-If you  are not root when  you run the installation  command, Pip will
+If you are not *root* when  you run the installation command, Pip will
 install the library and executables locally in your home.
 
 To undo the installation, simply do:
@@ -185,3 +148,21 @@ pip uninstall czutils
 #### Non-breaking changes
 
 * **czmake** now reads from STDIN also if no '-' is given. 
+
+### Version 1.3.0
+
+#### Breaking additions
+
+* module **utils.czstring** removed
+* module **app.fill** removed (functionality migrated to new modules
+  **utils.czoutline**, **utils.cztext** and **app.textformat**)
+
+#### Breaking changes
+
+* command-line application **fill** renamed to **textformat**
+  (with extended functionality)
+
+#### Non-breaking additions
+
+* new modules **utils.czoutline** and **utils.cztext**
+* new command-line applications **textformat** and **czutils-demo** 

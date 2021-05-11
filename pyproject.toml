@@ -12,12 +12,11 @@
 
 [tool.poetry]
 name = "czutils"
-version = "1.2.0"
-description = "A \"universal\" Python library and collection of useful command line utilities."
+version = "1.3.0"
+description = "A \"universal\" Python library and collection of useful command-line utilities."
 authors = ["Alexander Czutro <github@czutro.ch>"]
 homepage = "https://github.com/aczutro/czutils"
 license = "GPL-3.0-or-later"
-readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -25,11 +24,11 @@ python = "^3.8"
 [tool.poetry.dev-dependencies]
 
 [tool.poetry.scripts]
+czmake = "czutils.app:mainCZMake"
+czutils-demo = "czutils.app:mainDemo"
 hide = "czutils.app:mainHide"
 uhide = "czutils.app:mainUhide"
-czmake = "czutils.app:mainCZMake"
-fill = "czutils.app:mainFill"
-czutils-demo = "czutils.app:mainDemo"
+textformat = "czutils.app:mainTextFormat"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
