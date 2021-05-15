@@ -14,9 +14,10 @@
 Demo application to show the capabilities of library 'czutils'.
 """
 from ..private import __versionString__
-from ..utils import czoutline, cztext, czthreading, czlogging
+from ..utils import czoutline, cztext, czthreading, czlogging, czmath
 
 import argparse
+import io
 import random
 import sys
 import time
@@ -49,6 +50,37 @@ def czloggingDemo():
 
 
 #czloggingDemo
+
+def czmathDemo():
+    """
+    Demo of module 'utils.czmath'.
+    """
+    OL = czoutline.Outliner(h2Style=czoutline.Style.BOLD,
+                            h3Style=czoutline.Style.BOLD
+                            )
+    OL << """* czmath demo
+              
+          ** czmath.arabic2roman
+          
+          This function returns the roman numeral representation of an integer.
+          Here are the numbers 1 to 100:
+          """
+    first = lambda i : ("%d:" % i).rjust(6)
+    second = lambda i, w : czmath.arabic2roman(i).ljust(w)
+
+    text = io.StringIO()
+    for i in range(1, 26):
+        print(first(i), second(i, 5),
+              first(i + 25), second(i + 25, 7),
+              first(i + 50), second(i + 50, 6),
+              first(i + 75), second(i + 75, 8),
+              file=text
+              )
+    #for
+
+    OL.verbatim(text.getvalue())
+#czmathDemo
+
 
 def czoutlineDemo():
     """
@@ -201,9 +233,6 @@ def czoutlineDemo():
              like normal text:"""
 
     OL.verbatim(cztext.getPalette(cztext.Palette.COL16))
-
-    OL << "* ==============================================================================="
-
 #czoutlineDemo
 
 
@@ -300,9 +329,6 @@ paws one  after   the    other to get rid of the\tsleepy
     OL.verbatim(l(229, 202, 60))
     OL.verbatim(l(195, 27, 40))
     OL.verbatim(l(194, 22, 20))
-
-    OL << "* ==============================================================================="
-
 #cztextDemo
 
 
@@ -412,18 +438,31 @@ def main():
 
     aa = lambda o, h: G2.add_argument(o, action="store_true", help=h)
     aa("-logging", "run czlogging demo")
+    aa("-math", "run czmath demo")
     aa("-outline", "run czoutline demo")
     aa("-text", "run cztext demo")
     aa("-threading", "run czthreading demo")
+
     A = P.parse_args()
 
     if A.all:
+        OL = czoutline.Outliner()
+        sep = lambda : OL.h1(
+            "===============================================================================")
         czloggingDemo()
+        sep()
+        czmathDemo()
+        sep()
         czoutlineDemo()
+        sep()
         cztextDemo()
+        sep()
         czthreadingDemo()
+        sep()
     elif A.logging:
         czloggingDemo()
+    elif A.math:
+        czmathDemo()
     elif A.outline:
         czoutlineDemo()
     elif A.text:

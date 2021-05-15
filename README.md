@@ -35,6 +35,7 @@ following modules are currently available:
 |      `czcode` | Help functions for code generation.                                       |
 |  `cziterable` | Generic functions to search in iterables.                                 |
 |   `czlogging` | A wrapper class for the system logger.                                    |
+|      `czmath` | Mathematics library.                                                      |
 |   `czoutline` | A document formatter for text displayed on a monospace-text-based medium. |
 |    `czsystem` | Help functions related to the (operating) system.                         |
 |      `cztext` | Functions to format long texts and to colourise strings.                  |
