@@ -94,7 +94,9 @@ def textFormat(text: str, action: str,
                                 h2Style=czoutline.Style.BOLD_TITLE if boldHeadings \
                                     else czoutline.Style.TITLE,
                                 h3Style=czoutline.Style.BOLD_TITLE if boldHeadings \
-                                    else czoutline.Style.TITLE
+                                    else czoutline.Style.TITLE,
+                                bulletStyle=czoutline.Style.BOLD if boldHeadings \
+                                    else czoutline.Style.NORMAL
                                 )
         OL << text
         return ans.getvalue()
