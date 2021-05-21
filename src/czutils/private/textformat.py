@@ -18,15 +18,16 @@ from . import __versionString__
 from ..utils import czoutline
 
 import argparse
+import os
 import sys
 
 
 def _printOutlineHelp():
-    OL = czoutline.Outliner()
+    OL = czoutline.Outliner(lineWidth=min(70, os.get_terminal_size().columns))
     OL << """* Outliner markup
     
-             Outliner markup is a simple markup language that achieves structure
-             through indentation.  This help text was generated with Outliner
+             Outliner markup is a simple markup language.
+               This help text was generated with Outliner
              markup. 
              
              It supports the following elements:
@@ -55,11 +56,11 @@ def _printOutlineHelp():
              For example: 
              >>
 ##
-This is a paragraph with indentation level n.
+This produces a paragraph with indentation level n.
 >> 
-This is a new paragraph with indentation level n+1.
+This produces a new paragraph with indentation level n+1.
 <<
-This is another paragraph with indentation level n.
+This produces another paragraph with indentation level n.
 ##             
              <<
              A manually changed indentation level remains valid until the next
@@ -77,7 +78,70 @@ This is another paragraph with indentation level n.
              Lines starting with '#' can be processed like normal text or
              regarded as comments (option -m).  If regarded as comments, they
              may be printed (option -p) or suppressed.
+             
+             ** lists
+             
+             Lines starting with a single '-' or '+' are interpreted as items of a
+             bulleted list.
+                          
+             Lines starting with "i." for an i >= 0 are interpreted
+             as items of a numbered list.  The i value of the first such item
+             determines the list's first number.  All subsequent items are
+             numbered automatically.
+
+             Finally, if a line starting with '-' or '+' contains " :: ", a
+             dictionary list is created.  Each item in such a list is composed
+             of a key (everything before the " :: ") and a description of the
+             key (everything after the " :: ").
+             
+             For example, the following input:
+             
+             >>
              """
+    text = """\
+1. first item
+1. A long item to show that list items are
+formatted like
+paragraphs as well.  That means, lines are
+filled or wrapped to
+fit the maximum line width.
+
+1. third item
+
+- This starts a new list.
++ second item of the new list
+
+- third item of the new list
+0.  This starts a new numbered list that counts
+from 0.
+
+9. This item's number is not 9.
+
+And this is a dictionary:
+
+- hat :: A covering for the head that is not
+part of a piece of clothing.
+          
++ shoe\t::\tA covering for the foot, usually
+made of a strong material
+such as leather, with a thick leather or
+plastic sole and a heel.
+- trousers (US pants) :: A piece of clothing that covers
+the lower part of the body
+from the waist to the feet.
+
++ glove :: A covering for the hand.
+
+This is unrelated text to show how Outliner goes back to
+paragraph mode when a list ends."""
+
+    OL.verbatim(text)
+
+    OL << """<<
+             produces:"""
+
+    OL << text
+
 #_printOutlineHelp
 
 

@@ -65,8 +65,8 @@ def czmathDemo():
           This function returns the roman numeral representation of an integer.
           Here are the numbers 1 to 100:
           """
-    first = lambda i : ("%d:" % i).rjust(6)
-    second = lambda i, w : czmath.arabic2roman(i).ljust(w)
+    first = lambda _i : ("%d:" % _i).rjust(6)
+    second = lambda _i, _w : czmath.arabic2roman(_i).ljust(_w)
 
     text = io.StringIO()
     for i in range(1, 26):
@@ -134,19 +134,17 @@ def czoutlineDemo():
     OL.h3('example')
 
     OL << """As you may have noticed, paragraphs are indented to match the
-             indentation level of the headings that precede them.  However, it
-             is also possible to increment or decrement the 
-             indentation level with "OL.inc()" and
-             "OL.dec()", respectively.  That's useful, for example, to
-             "highlight" statements, like I did with the setH3Style line of
-             code."""
+             indentation level of the headings that precede them.  This all
+             happens automatically and you don't have to worry about it.
+             However, sometimes it may be useful to increment the indentation of
+             a paragraph.  The current indentation level can be incremented with
+             "OL.inc()" and decremented with "OL.dec()"."""
 
     OL.dec()
-    OL << """"OL << text" can be used to print a paragraph of text. That's 
-             what I've been using to print all the paragraphs you just 
-             read.  The lines of the paragraph are automatically wrapped to fit
-             the maximum line width. 
-              
+    OL << """"OL << text" can be used to print a paragraph of text. 
+             Paragraphs are not only indented automatically, but also formatted
+             to fit the maximum line width.
+
              However, "OL << text" can do a lot more than just print
              a single paragraph.  That function interprets certain
              patterns in 'text' as commands that will produce headings or
@@ -155,64 +153,64 @@ def czoutlineDemo():
     OL << "For example, have a look at this command: "
 
     text = """
-     # -*- mode: org -*-
-     #+TITLE:     Tom Sawyer
-     #+AUTHOR:    Mark Twain
-     #+EMAIL:     real.mark.twain@mississippi.com
-     #+DATE:      Sat Aug 15 17:41:00 CDT 1874
+      # -*- mode: org -*-
+      #+TITLE:     Tom Sawyer
+      #+AUTHOR:    Mark Twain
+      #+EMAIL:     real.mark.twain@mississippi.com
+      #+DATE:      Sat Aug 15 17:41:00 CDT 1874
 
-     * ------------------------------------------------------------
+      * ------------------------------------------------------------
 
-     * the adventures of tom sawyer
+      * the adventures of tom sawyer
 
-     by Mark Twain (Samuel Langhorne Clemens)
+      by Mark Twain (Samuel Langhorne Clemens)
 
-     ** chapter 1
+      ** chapter 1
 
-     "TOM!"
+      "TOM!"
 
-     No answer.
+      No answer.
 
-     "TOM!"
+      "TOM!"
 
-     No answer.
+      No answer.
 
-     "What's
-     gone
-     with
-     that
-      boy,
-       I
-       wonder?
-       You,
-        TOM!"
+      "What's
+      gone
+      with
+      that
+       boy,
+        I
+        wonder?
+        You,
+         TOM!"
 
-     No answer.
+      No answer.
 
-     >>
+      >>
 
-     [Place illustration here.]
+      [Place illustration here.]
 
-     <<
+      <<
 
-     The old lady pulled her spectacles down and looked over them
-      about the room;
-      then she put them up and looked out under them.
-     She seldom or never looked THROUGH them for so small a thing
-      as a boy;
-      they were her state pair, the pride of her heart, and
-     were built for "style," not service -- she could have seen
-      through a pair
-      of stove-lids just as well. She looked perplexed for
-     a moment, and then said, not fiercely, but still loud enough
-      for the
-      furniture to hear:
+      The old lady pulled her spectacles down and looked over them
+       about the room;
+       then she put them up and looked out under them.
+      She seldom or never looked THROUGH them for so small a thing
+       as a boy;
+       they were her state pair, the pride of her heart, and
+      were built for "style," not service -- she could have seen
+       through a pair
+       of stove-lids just as well. She looked perplexed for
+      a moment, and then said, not fiercely, but still loud enough
+       for the
+       furniture to hear:
 
-     * ------------------------------------------------------------
-     """
+      * ------------------------------------------------------------
+      """
 
     OL.inc()
-    OL.verbatim('P << """' + text + '"""')
+    OL.verbatim('OL << """' + text + '"""')
 
     OL.dec()
     OL << "That command produces this:"
@@ -222,17 +220,63 @@ def czoutlineDemo():
     OL.setLineWidth(70)
 
     OL << """>>
-             Finally, "OL.verbatim(text)" prints the text as it is, which is how
+             "OL.verbatim(text)" prints the text as it is, which is how
                I printed the unprocessed Tom Sawyer text.
              Verbatim is useful when you have a good reason not to let Outliner
-              wrap the lines, but note that verbatim sections are indented to 
+              wrap the lines, but note that verbatim sections are indented to
               match the document's indentation level.
-              
+
              For example, let me print a colour chart
              that shouldn't be formatted
              like normal text:"""
 
     OL.verbatim(cztext.getPalette(cztext.Palette.COL16))
+
+    OL << """Lists can be produced as well.  "OL.ul()" starts a bulleted
+             list, and each list item is put with "OL.li(text)"."""
+
+    OL.ul()
+    OL.li("first item")
+    OL.li("second item")
+    OL.li("A long item to show that list items are formatted like "
+          "paragraphs as well.  That means, lines are filled or wrapped to "
+          " fit the "
+          "maximum line width.")
+
+    OL << """"OL.ol()" produces a numbered list."""
+
+    OL.ol()
+    OL.li("first item")
+    OL.li("second item")
+    OL.li("A long item to show that list items are formatted like "
+          "paragraphs as well.  That means, lines are filled or wrapped to "
+          " fit the "
+          "maximum line width.")
+
+    OL << """"OL.dl()" produces a dictionary list.  Each item is
+          composed of a key and a description.  These are put with
+          "OL.di(key, description)"."""
+
+    OL.dl()
+    OL.di("hat",
+          "A covering for the head that is not part of a piece of clothing."
+          )
+    OL.di("shoe",
+          """A covering for the foot, usually made of a strong material
+          such as leather, with a thick leather or plastic sole and a
+          heel."""
+          )
+    OL.di("trousers (US pants)",
+          """A piece of clothing that covers the lower part of the body
+          from the waist to the feet."""
+          )
+    OL.di("a truly splendid three-piece suit combined with shiny shoes "
+          "and an elegant hat",
+          "Just to see what happens with long keys."
+          )
+
+    OL << "This is unrelated text to show how Outliner " \
+          "goes back to  paragraph mode  when no more list items are added."
 #czoutlineDemo
 
 
@@ -244,13 +288,13 @@ def cztextDemo():
                             h3Style=czoutline.Style.BOLD)
 
     OL << """* cztext demo
-             
+
              Module 'cztext' provides functions to format text that will be
-             displayed on a purely text-based medium, like the 
+             displayed on a purely text-based medium, like the
              command line terminal or the text editor.
-             
+
              ** cztext.colourise
-             
+
              This function takes a string and returns a copy of it with ANSI
              escape codes that will make the text and its background have the
              chosen colours when printed on ANSI-compliant
@@ -258,7 +302,7 @@ def cztextDemo():
              """
 
     OL << """Three colour palettes are supported.
-             
+
              *** 16-colour palette
              """
     OL.verbatim(cztext.getPalette(cztext.Palette.COL16))
@@ -289,16 +333,16 @@ def cztextDemo():
     text = """It was seven o'clock of a very warm evening
  in the Seeonee hills
       when Father Wolf woke up from his day's rest,
-              scratched himself, yawned, and spread out \t his 
-paws one  after   the    other to get rid of the\tsleepy 
+              scratched himself, yawned, and spread out \t his
+paws one  after   the    other to get rid of the\tsleepy
                        feeling in their tips. \t"""
 
     OL << """** cztext.align
-             
+
              This function aligns text left, right or centre:
-             
+
              Take, for example, this input text:
-             
+
              >>
              """
     OL.verbatim(text)
