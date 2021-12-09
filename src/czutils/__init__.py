@@ -15,6 +15,6 @@ A "universal" Python library and collection of useful command line utilities.
 """
 
 __author__ = "Alexander Czutro <github@czutro.ch>"
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 ### aczutro ###################################################################

@@ -30,15 +30,16 @@ using the command line instead of a graphical front-end.
 The **universal  library** is implemented in  Subpackage `utils`.  The
 following modules are currently available:
 
-|              |                                                                           |
-|-------------:|:--------------------------------------------------------------------------|
-| `czcode`     | Help functions for code generation.                                       |
-| `cziterable` | Generic functions to search in iterables.                                 |
-| `czlogging`  | A wrapper class for the system logger.                                    |
-| `czoutline`  | A document formatter for text displayed on a monospace-text-based medium. |
-| `czsystem`   | Help functions related to the (operating) system.                         |
-| `cztext`     | Functions to format long texts and to colourise strings.                  |
-| `cztime`     | An easy-to-use timer.                                                     |
+|               |                                                                           |
+|--------------:|:--------------------------------------------------------------------------|
+|      `czcode` | Help functions for code generation.                                       |
+|  `cziterable` | Generic functions to search in iterables.                                 |
+|   `czlogging` | A wrapper class for the system logger.                                    |
+|   `czoutline` | A document formatter for text displayed on a monospace-text-based medium. |
+|    `czsystem` | Help functions related to the (operating) system.                         |
+|      `cztext` | Functions to format long texts and to colourise strings.                  |
+| `czthreading` | Base classes for asynchronous components that run in their own thread.    |
+|      `cztime` | An easy-to-use timer.                                                     |
 
 The  command-line  application  `czutils-demo`  provides  examples  of
 usage.   In addition,  all functions  and classes  that belong  to the
@@ -122,7 +123,7 @@ pip uninstall czutils
 
 ### Version 1.0.0: first release
 
-#### Non-breaking additions
+#### Non-breaking 
 
 * new modules **utils.czcode**, **utils.czlogging** and
   **utils.czutils**
@@ -131,38 +132,51 @@ pip uninstall czutils
 
 ### Version 1.1.0
 
-#### Non-breaking additions
+#### Non-breaking 
 
 * new module **app.czmake**
 * new application script **czmake**
 
 ### Version 1.2.0
 
-#### Non-breaking additions
+#### Non-breaking 
 
 * new modules **utils.cziterable**, **utils.czstring** and 
   **utils.cztime**
 * new module **app.fill**
 * new application script **fill**
-
-#### Non-breaking changes
-
 * **czmake** now reads from STDIN also if no '-' is given. 
 
 ### Version 1.3.0
 
-#### Breaking additions
+#### Breaking
 
 * module **utils.czstring** removed
 * module **app.fill** removed (functionality migrated to new modules
   **utils.czoutline**, **utils.cztext** and **app.textformat**)
-
-#### Breaking changes
-
 * command-line application **fill** renamed to **textformat**
   (with extended functionality)
 
-#### Non-breaking additions
+#### Non-breaking
 
 * new modules **utils.czoutline** and **utils.cztext**
 * new command-line applications **textformat** and **czutils-demo** 
+
+### Version 1.4.0
+
+#### Breaking
+
+* **czlogging.LogLevel** renamed to **czlogging.LoggingLevel**
+* **czlogging.LogChannel** renamed to **czlogging.LoggingChannel**
+
+#### Non-breaking
+
+* new logging level **SILENT**
+* now each LoggingChannel instance can have its own logging level
+* support for colour output in logging messages
+* new demo: **czlogging**
+* new module **utils.czthreading**
+* **czsystem**: new function **resolveAbsPath**
+* Modules **czthreading** and **czsystem** define a module-wide logger 
+  (LoggingChannel instance), and provide function **setLoggingOptions** 
+  to change the module's logging level.

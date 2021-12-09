@@ -22,7 +22,7 @@ _logger = LoggingChannel("czutils.utils.czsystem",
                          LoggingLevel.SILENT,
                          colour=True)
 
-def setLoggingLevel(level: int, colour = True) -> None:
+def setLoggingOptions(level: int, colour = True) -> None:
     """
     Sets this module's logging level.  If not called, the logging level is
     SILENT.
@@ -37,7 +37,8 @@ def setLoggingLevel(level: int, colour = True) -> None:
     """
     global _logger
     _logger = LoggingChannel("czutils.utils.czsystem", level, colour=colour)
-#setLoggingLevel
+
+#setLoggingOptions
 
 
 def appName() -> str:

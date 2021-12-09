@@ -10,7 +10,7 @@
 #
 ################################################################### aczutro ###
 
-"""Classes for multi-threaded programming"""
+"""Base classes for asynchronous components that run in their own thread."""
 
 from .czlogging import *
 from .czcode import autoStr
@@ -23,7 +23,7 @@ _logger = LoggingChannel("czutils.utils.czthreading",
                          LoggingLevel.SILENT,
                          colour=True)
 
-def setLoggingLevel(level: int, colour = True) -> None:
+def setLoggingOptions(level: int, colour = True) -> None:
     """
     Sets this module's logging level.  If not called, the logging level is
     SILENT.
@@ -38,7 +38,8 @@ def setLoggingLevel(level: int, colour = True) -> None:
     """
     global _logger
     _logger = LoggingChannel("czutils.utils.czthreading", level, colour=colour)
-#setLoggingLevel
+
+#setLoggingOptions
 
 
 @autoStr
@@ -74,8 +75,8 @@ class Thread:
     When start() is called, method threadCode()
     is executed in a separate thread.
 
-    This class uses the module's logger.  Set the logging level with
-    setLoggingLevel(level).
+    This class uses the module's logger.  Set the logging level and whether to
+    use colour with setLoggingOptions(level, colour={True|False}).
     """
 
     def __init__(self, name: str):
@@ -193,8 +194,8 @@ class Thread:
 
 class ReactiveThread(Thread):
     """
-    Base class for an asynchronous component with a standard infinite message
-    processing loop.
+    Base class for an asynchronous component with a standard infinite loop for
+    message processing.
 
     The component waits for incoming messages and processes them serially (in
     receival order) until either a QuitMessage is received, or until
@@ -215,8 +216,8 @@ class ReactiveThread(Thread):
 
         self.addMessageProcessor("SomeMsgClass", self.processSomeMsgClass)
 
-    This class uses the module's logger.  Set the logging level with
-    setLoggingLevel(level).
+    This class uses the module's logger.  Set the logging level and whether to
+    use colour with setLoggingOptions(level, colour={True|False}).
     """
 
     def __init__(self, name: str, messageWaitingTime: float):
@@ -274,7 +275,7 @@ class ReactiveThread(Thread):
     def threadCodePre(self) -> None:
         """
         Override this method to implement code that needs to be executed
-        BEFORE the message processing loop.
+        once BEFORE the message processing loop.
         """
         pass
     #threadCodePre
@@ -283,7 +284,7 @@ class ReactiveThread(Thread):
     def threadCodePost(self) -> None:
         """
         Override this method to implement code that needs to be executed
-        AFTER the message processing loop.
+        once AFTER the message processing loop.
         """
         pass
     #threadCodePost

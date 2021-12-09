@@ -358,7 +358,7 @@ def czthreadingDemo():
     OL = czoutline.Outliner()
     OL.h1("czthreading demo")
 
-    czthreading.setLoggingLevel(czlogging.LoggingLevel.WARNING)
+    czthreading.setLoggingOptions(czlogging.LoggingLevel.WARNING)
 
     p1 = Player("ping-player", OL)
     p2 = Player("pong-player", OL)
