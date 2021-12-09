@@ -15,42 +15,43 @@
 import logging
 
 
-class LogLevel:
+class LoggingLevel:
     """
     IDs for logging levels.
     """
-    INFO = "INFO"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
-#LogLevel
+    INFO = 0
+    WARNING = 1
+    ERROR = 2
+    SILENT = 3
+#LoggingLevel
 
 
-class LogChannel:
+class LoggingChannel:
     """
-    A logging channel that uses the system logger.
+    A logging channel that uses the standard python logger.
 
-    The main difference to the standard logger is that it only provides methods
-    log, warning and error, and that these concatenate all their arguments into
-    one message, like print(...) does.  For example:
+    The main differences to the standard logger are that only the methods
+    info(), warning() and error() are provided, and that these methods
+    concatenate all their arguments into one message, like print(...) does.
 
-    ::
-
-        if not isinstance(someObject, int):
-            channel.error("expected int, but got", someObject)
+    Also, each instance has its own logging level so that logging can be turned
+    on/off for individual modules or classes
     """
 
-    def __init__(self, channelName: str, minLevel: str = LogLevel.WARNING):
+    def __init__(self, channelName: str, minLevel: int):
         """
         :param channelName: e.g. the application name
-        :param minLevel:    minimum logging level.
+        :param minLevel:    minimum logging level.  If None, nothing is logged.
                             Possible values:
-                              - LogLevel.INFO
-                              - LogLevel.WARNING
-                              - LogLevel.ERROR
+                              - LoggingLevel.INFO
+                              - LoggingLevel.WARNING
+                              - LoggingLevel.ERROR
+                              - LoggingLevel.SILENT
         """
         logging.basicConfig(format="%(name)s: %(cln)s: %(message)s", # cln = custom level name
-                            level=minLevel)
-        self.logger = logging.getLogger(channelName)
+                            level="INFO")
+        self._logger = logging.getLogger(channelName)
+        self._level = LoggingLevel.SILENT if minLevel is None else minLevel
     #__init__
 
 
@@ -58,9 +59,10 @@ class LogChannel:
         """
         Logs a message with INFO level.
         """
-        self._log(self.logger.info,
-                  ' '.join((str(arg) for arg in args)),
-                  "info")
+        if self._level <= LoggingLevel.INFO:
+            self._logger.info(' '.join((str(arg) for arg in args)),
+                              extra={ "cln" : "info" })
+        #if
     #info
 
 
@@ -68,9 +70,10 @@ class LogChannel:
         """
         Logs a message with WARNING level.
         """
-        self._log(self.logger.warning,
-                  ' '.join((str(arg) for arg in args)),
-                  "warning")
+        if self._level <= LoggingLevel.WARNING:
+            self._logger.warning(' '.join((str(arg) for arg in args)),
+                                 extra={ "cln" : "warning" })
+        #if
     #warning
 
 
@@ -78,24 +81,13 @@ class LogChannel:
         """
         Logs a message with ERROR level.
         """
-        self._log(self.logger.error,
-                  ' '.join((str(arg) for arg in args)),
-                  "error")
+        if self._level <= LoggingLevel.ERROR:
+            self._logger.error(' '.join((str(arg) for arg in args)),
+                               extra={ "cln" : "error" })
+        #if
     #error
 
-
-    def _log(self, f, msg: str, levelName: str):
-        """
-        Back-end for logging functions.
-
-        :param f:         pointer to logging function
-        :param msg:       message to log
-        :param levelName: custom level name to appear in message
-        """
-        f(msg, extra={ "cln" : levelName }) # cln = custom level name
-    #_log
-
-#LogChannel
+#LoggingChannel
 
 
 ### aczutro ###################################################################

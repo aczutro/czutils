@@ -14,7 +14,7 @@
 Function to hide and "unhide" files,
 and main routines for applications hide and uhide.
 """
-from ..private.hide import Breaker, CLPHide, CLPUhide, nop
+from ..private.hide import Breaker, CLPHide, CLPUhide
 
 from ..utils import czlogging
 from ..utils import czsystem
@@ -26,33 +26,35 @@ import sys
 
 
 def hideUnhide(files: str, hide: bool,
-               copy: bool = False,
-               strict: bool = False,
-               abort: bool = False,
-               noOverwrite: bool = True,
-               verbose: bool = False,
-               logChannel: czlogging.LogChannel = None
+               copy = False,
+               strict = False,
+               abort = False,
+               noOverwrite = True,
+               verbose = False,
+               loggingChannel = czlogging.LoggingChannel(
+                   '', czlogging.LoggingLevel.SILENT)
                ) -> int:
     """
     Hides or "unhides" files, directories and symlinks.
 
-    :param files:       List of strings: each string is a path to a file,
-                        directory or symlink.
-    :param hide:        If true, hides files.  If false, unhides them.
-    :param copy:        If true, instead of renaming the file, makes a
-                        hidden/unhidden copy.
-    :param strict:        In hide mode: If true, refuses to "hide hidden files".
-                        (If false, hiding ".file" means renaming it to
-                        "..file".)
-                          In unhide mode: If true, "completely unhides" files,
-                        i.e. "..file" becomes "file".  (If false, "..file"
-                        becomes ".file".)
-    :param abort:       If true, aborts on first failure.
-    :param noOverwrite: If false, silently overwrite target files (but not
-                        directories).
-    :param verbose:     If true, prints executed rename/copy operations to
-                        sys.stdout.
-    :param logChannel:  a log channel for warnings and errors (may be None).
+    :param files:           List of strings: each string is a path to a file,
+                            directory or symlink.
+    :param hide:            If true, hides files.  If false, unhides them.
+    :param copy:            If true, instead of renaming the file, makes a
+                            hidden/unhidden copy.
+    :param strict:          In hide mode: If true, refuses to "hide hidden
+                            files".
+                            (If false, hiding ".file" means renaming it to
+                            "..file".)
+                            In unhide mode: If true, "completely unhides" files,
+                            i.e. "..file" becomes "file".  (If false, "..file"
+                            becomes ".file".)
+    :param abort:           If true, aborts on first failure.
+    :param noOverwrite:     If false, silently overwrite target files (but not
+                            directories).
+    :param verbose:         If true, prints executed rename/copy operations to
+                            sys.stdout.
+    :param loggingChannel:  a logging channel for warnings and errors.
 
     :return: 0 on success, 1 on fail.  Fail means that at least one rename/copy
              operation has failed.
@@ -72,19 +74,11 @@ def hideUnhide(files: str, hide: bool,
         nibbles.append('not') # [0]
     #else
     if abort:
-        if logChannel is None:
-            fComplain = nop
-        else:
-            fComplain = logChannel.error
-        #else
+        fComplain = loggingChannel.error
         nibbles.append('') # [1]
         nibbles.append(lambda x: '') # [2]
     else:
-        if logChannel is None:
-            fComplain = nop
-        else:
-            fComplain = logChannel.warning
-        #else
+        fComplain = loggingChannel.warning
         nibbles.append('-- skipping') # [1]
         nibbles.append(lambda x: "-- skipping '%s'" % x) # [2]
     #else
@@ -171,7 +165,8 @@ def _mainTemplate(CLPcls):
 
     :param CLPcls: command line parser class
     """
-    L = czlogging.LogChannel(czsystem.appName())
+    L = czlogging.LoggingChannel(czsystem.appName(),
+                                 czlogging.LoggingLevel.WARNING)
     try:
         CLP = CLPcls()
         args = CLP.parseCommandLine()
@@ -182,7 +177,7 @@ def _mainTemplate(CLPcls):
                             abort=args.abort,
                             noOverwrite=args.noOverwrite,
                             verbose=args.verbose,
-                            logChannel=L
+                            loggingChannel=L
                             ))
     except AssertionError as e:
         raise e

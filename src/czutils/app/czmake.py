@@ -143,7 +143,8 @@ def main():
     """
     Main routine for command-line app czmake.
     """
-    L = czlogging.LogChannel(czsystem.appName())
+    L = czlogging.LoggingChannel(czsystem.appName(),
+                                 czlogging.LoggingLevel.WARNING)
     try:
         CLP = CommandLineParser()
         args = CLP.parseCommandLine()

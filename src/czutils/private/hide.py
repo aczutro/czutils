@@ -18,12 +18,6 @@ from . import __versionString__
 import argparse
 
 
-def nop(*args):
-    """Does nothing."""
-    pass
-#nop
-
-
 class Breaker(Exception):
     """
     Raised to jump out of deep loops.
