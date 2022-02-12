@@ -19,9 +19,11 @@ import threading
 import typing
 
 
-_logger = LoggingChannel("czutils.utils.czthreading", LoggingLevel.SILENT)
+_logger = LoggingChannel("czutils.utils.czthreading",
+                         LoggingLevel.SILENT,
+                         colour=True)
 
-def setLoggingLevel(level: int) -> None:
+def setLoggingLevel(level: int, colour = True) -> None:
     """
     Sets this module's logging level.  If not called, the logging level is
     SILENT.
@@ -31,9 +33,11 @@ def setLoggingLevel(level: int) -> None:
                   - czlogging.LoggingLevel.WARNING
                   - czlogging.LoggingLevel.ERROR
                   - czlogging.LoggingLevel.SILENT
+
+    :param colour: If true, use colour in log headers.
     """
     global _logger
-    _logger = LoggingChannel("czutils.utils.czthreading", level)
+    _logger = LoggingChannel("czutils.utils.czthreading", level, colour=colour)
 #setLoggingLevel
 
 
