@@ -22,6 +22,34 @@ import sys
 import time
 
 
+def czloggingDemo():
+    """
+    Demo of module 'utils.czlogging'.
+    """
+    OL = czoutline.Outliner()
+
+    OL.h1("czlogging demo")
+
+    OL.verbatim("")
+
+    logger = czlogging.LoggingChannel("default logger",
+                                      czlogging.LoggingLevel.INFO)
+    logger.info("This is an info message.")
+    logger.warning("This is a warning.")
+    logger.error("This is an error message.")
+
+    OL.verbatim("")
+
+    logger = czlogging.LoggingChannel("colour logger",
+                                      czlogging.LoggingLevel.INFO,
+                                      colour=True)
+    logger.info("This is an info message.")
+    logger.warning("This is a warning.")
+    logger.error("This is an error message.")
+
+
+#czloggingDemo
+
 def czoutlineDemo():
     """
     Demo of module 'utils.czoutline'.
@@ -31,8 +59,8 @@ def czoutlineDemo():
     OL.h1("czoutline demo")
 
     OL << """Module 'czoutline' provides Class Outliner, which is a document
-             formatter for text  
-             displayed on a purely text-based medium, like the 
+             formatter for text
+             displayed on a purely text-based medium, like the
              command line terminal or the text editor."""
 
     OL << """The premise is that the text-based environment provides only one
@@ -41,8 +69,8 @@ def czoutlineDemo():
 
     OL << "Let OL = czoutline.Outliner()."
 
-    OL << """OL.h1, OL.h2 and OL.h3 can be passed a single line of text to 
-             print level-1, level-2 or level-3 headings, respectively. 
+    OL << """OL.h1, OL.h2 and OL.h3 can be passed a single line of text to
+             print level-1, level-2 or level-3 headings, respectively.
              For example, "OL.h1('level 1')" produces:"""
 
     OL.h1("level 1")
@@ -383,15 +411,19 @@ def main():
     G2 = G2.add_mutually_exclusive_group()
 
     aa = lambda o, h: G2.add_argument(o, action="store_true", help=h)
+    aa("-logging", "run czlogging demo")
     aa("-outline", "run czoutline demo")
     aa("-text", "run cztext demo")
     aa("-threading", "run czthreading demo")
     A = P.parse_args()
 
     if A.all:
+        czloggingDemo()
         czoutlineDemo()
         cztextDemo()
         czthreadingDemo()
+    elif A.logging:
+        czloggingDemo()
     elif A.outline:
         czoutlineDemo()
     elif A.text:

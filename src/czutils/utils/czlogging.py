@@ -26,6 +26,14 @@ class LoggingLevel:
 #LoggingLevel
 
 
+def _stringToColour(channelName: str) -> int:
+    """
+    :return: Returns a pseudo-random number between 31 and 36 depending on
+             the value of channelName (deterministic).
+    """
+    return (sum([ ord(c) for c in channelName ] + [ 0 ] ) % 6) + 31
+#_stringToColour
+
 class LoggingChannel:
     """
     A logging channel that uses the standard python logger.
@@ -38,7 +46,7 @@ class LoggingChannel:
     on/off for individual modules or classes
     """
 
-    def __init__(self, channelName: str, minLevel: int):
+    def __init__(self, channelName: str, minLevel: int, colour = False):
         """
         :param channelName: e.g. the application name
         :param minLevel:    minimum logging level.  If None, nothing is logged.
@@ -47,11 +55,33 @@ class LoggingChannel:
                               - LoggingLevel.WARNING
                               - LoggingLevel.ERROR
                               - LoggingLevel.SILENT
+        :param colour:      If true, print channel name and level keyword in
+                            colour.
         """
-        logging.basicConfig(format="%(name)s: %(cln)s: %(message)s", # cln = custom level name
-                            level="INFO")
+        # colour = colour on
+        # cln = custom level name
+        # def = colour off
+        format = "%(colour)s%(name)s: %(bold)s%(cln)s:%(def)s %(message)s"
+        logging.basicConfig(format = format, level = "INFO")
+
         self._logger = logging.getLogger(channelName)
         self._level = LoggingLevel.SILENT if minLevel is None else minLevel
+
+        _colour = _stringToColour(channelName)
+        _colourMap \
+            = { "colour" : "\033[%dm" % _colour, "bold" : "", "def" : "\033[0m"} \
+              if colour else { "colour" : "", "bold" : "", "def" : ""}
+
+        self._infoMap = dict(_colourMap)
+        self._warningMap = dict(_colourMap)
+        self._errorMap = dict(_colourMap)
+
+        self._infoMap.update({ "cln" : "info" })
+        self._warningMap.update({ "cln" : "warning" })
+        self._errorMap.update({ "cln" : "error" })
+        if colour:
+            self._errorMap.update({ "bold" : "\033[1m", "def" : "\033[0m"})
+        #if
     #__init__
 
 
@@ -61,7 +91,7 @@ class LoggingChannel:
         """
         if self._level <= LoggingLevel.INFO:
             self._logger.info(' '.join((str(arg) for arg in args)),
-                              extra={ "cln" : "info" })
+                              extra = self._infoMap)
         #if
     #info
 
@@ -72,7 +102,7 @@ class LoggingChannel:
         """
         if self._level <= LoggingLevel.WARNING:
             self._logger.warning(' '.join((str(arg) for arg in args)),
-                                 extra={ "cln" : "warning" })
+                                 extra = self._warningMap)
         #if
     #warning
 
@@ -83,7 +113,7 @@ class LoggingChannel:
         """
         if self._level <= LoggingLevel.ERROR:
             self._logger.error(' '.join((str(arg) for arg in args)),
-                               extra={ "cln" : "error" })
+                               extra = self._errorMap)
         #if
     #error
 
