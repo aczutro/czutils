@@ -68,7 +68,7 @@ class CommandLineParser:
                         )
         container = P.parse_args()
 
-        if container.inputFile is '-':
+        if container.inputFile == '-':
             container.inputFile = None
         #if
 
