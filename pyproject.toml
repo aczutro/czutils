@@ -12,7 +12,7 @@
 
 [tool.poetry]
 name = "czutils"
-version = "1.4.10"
+version = "1.4.1"
 description = "A \"universal\" Python library and collection of useful command-line utilities."
 authors = ["Alexander Czutro <github@czutro.ch>"]
 homepage = "https://github.com/aczutro/czutils"
