@@ -127,6 +127,48 @@ def resolveAbsPath(inputPath: str) -> str:
 #resolveFileLocation
 
 
+def filenameSplit(filename: str) -> tuple:
+    """
+    Splits a filename into a head (everything before the last dot) and a tail
+    (the "filename extension", i.e. what comes after the last dot.
+    :param filename:
+    :return: tuple (head, tail)
+    :raises: ValueError if filename is empty or ".".
+    """
+    if filename in [ "", "." ]:
+        raise ValueError
+    #if
+
+    if filename[0] == '.':
+        head, tail = filenameSplit(filename[1:])
+        return (".%s" % head, tail)
+    #if
+
+    tokens = filename.split(sep='.')
+    if len(tokens) < 2:
+        return (filename, "")
+    else:
+        return (".".join(tokens[:-1]), tokens[-1])
+    #else
+#filenameSplit
+
+
+def isHidden(path: str) -> bool:
+    """
+    :return: True if the filename given by path is hidden (i.e. the base name
+             starts with dot.
+    """
+    if path == "":
+        raise ValueError
+    #if
+    a, b = os.path.split(path)
+    if b == "":
+        a, b = os.path.split(a)
+    #if
+    return len(b) and b[0] == '.'
+#isHidden
+
+
 class SystemCallError(Exception):
     pass
 #SystemCallError
