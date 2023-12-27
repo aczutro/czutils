@@ -14,7 +14,7 @@
 
 from .czlogging import *
 import os
-import os.path
+import subprocess
 import sys
 
 
@@ -64,6 +64,43 @@ def isProperDir(directory: str):
 #_isProperDir
 
 
+def mkdir(path: str, p = False) -> None:
+    """
+    Extended version of os.mkdir which also implements the -p flag.
+
+    :param path: directory to create
+    :param p:    If true, also create parent directories if necessary.
+                 Also, if true, suppresses FileExistsError if the directory
+                 already exists.
+
+    :raises: ValueError if path is empty.
+    :raises: All exceptions that os.mkdir may raise, like FileExistsError,
+             FileNotFoundError, PermissionError, etc
+    """
+    if path == "":
+        raise ValueError
+    #if
+    if path != os.path.sep and path[-1] == os.path.sep:
+        path = path[:-1]
+    #if
+    try:
+        os.mkdir(path)
+    except FileExistsError as e:
+        if not (os.path.isdir(path) and p):
+            raise e
+        #if
+    except FileNotFoundError as e:
+        parent = os.path.dirname(path)
+        if p and parent != path:
+            mkdir(parent, p)
+            mkdir(path, p)
+        else:
+            raise e
+        #else
+    #except
+#mkdir
+
+
 def resolveAbsPath(inputPath: str) -> str:
     """
     Returns an absolute path version of inputPath.
@@ -88,6 +125,54 @@ def resolveAbsPath(inputPath: str) -> str:
     return os.path.join(home, inputPath)
 
 #resolveFileLocation
+
+
+class SystemCallError(Exception):
+    pass
+#SystemCallError
+
+
+class SystemCaller:
+    """
+    Executes sub-processes non-interactively and saves their stdout and stderr.
+    """
+    def __init__(self, exceptionOnFailure: bool):
+        """
+        :param exceptionOnFailure: If true, call() raises a SystemCallError if
+                                   the sub-process fails.  Else, call() returns
+                                   the sub-process's return code.
+        """
+        self._stdout = ""
+        self._stderr = ""
+        self._doRaise = exceptionOnFailure
+    #__init__
+
+
+    def stdout(self):
+        return self._stdout
+    #stdout
+
+
+    def stderr(self):
+        return self._stderr
+    #stdout
+
+
+    def call(self, args: list) -> int:
+        P = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = P.communicate()
+        self._stdout = stdout.decode(errors="ignore")
+        self._stderr = stderr.decode(errors="ignore")
+        if P.returncode:
+            _logger.warning("'%s'" % " ".join(args), "returned", P.returncode)
+            if self._doRaise:
+                raise SystemCallError(self._stderr)
+            #if
+        #if
+        return P.returncode
+    #def
+
+#SystemCaller
 
 
 ### aczutro ###################################################################

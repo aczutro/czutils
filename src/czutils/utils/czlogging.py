@@ -61,8 +61,8 @@ class LoggingChannel:
         # colour = colour on
         # cln = custom level name
         # def = colour off
-        format = "%(colour)s%(name)s: %(bold)s%(cln)s:%(def)s %(message)s"
-        logging.basicConfig(format = format, level = "INFO")
+        msgFormat = "%(colour)s%(name)s: %(bold)s%(cln)s:%(def)s %(message)s"
+        logging.basicConfig(format = msgFormat, level = "INFO")
 
         self._logger = logging.getLogger(channelName)
         self._level = LoggingLevel.SILENT if minLevel is None else minLevel

@@ -12,14 +12,14 @@
 
 [tool.poetry]
 name = "czutils"
-version = "1.4.0"
+version = "1.4.10"
 description = "A \"universal\" Python library and collection of useful command-line utilities."
 authors = ["Alexander Czutro <github@czutro.ch>"]
 homepage = "https://github.com/aczutro/czutils"
 license = "GPL-3.0-or-later"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 
 [tool.poetry.dev-dependencies]
 
