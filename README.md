@@ -37,6 +37,7 @@ following modules are currently available:
 |   `czlogging` | A wrapper class for the system logger.                                    |
 |      `czmath` | Mathematics library.                                                      |
 |   `czoutline` | A document formatter for text displayed on a monospace-text-based medium. |
+|  `czstrutils` | String manipulation functions.                                            | 
 |    `czsystem` | Help functions related to the (operating) system.                         |
 |      `cztext` | Functions to format long texts and to colourise strings.                  |
 | `czthreading` | Base classes for asynchronous components that run in their own thread.    |
@@ -181,3 +182,11 @@ pip uninstall czutils
 * Modules **czthreading** and **czsystem** define a module-wide logger 
   (LoggingChannel instance), and provide function **setLoggingOptions** 
   to change the module's logging level.
+
+### Version 1.4.1
+
+#### Non-breaking
+
+* new module **czstrutils** with function **grep**
+* new functions **filenameSplit** and **isHidden** in module **czsystem**
+* new class **SystemCaller** in module **czsystem**
