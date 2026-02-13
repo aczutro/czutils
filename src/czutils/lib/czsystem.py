@@ -13,9 +13,9 @@
 """Help functions related to the (operating) system."""
 
 import logging
-import os
 import subprocess
 import sys
+from pathlib import Path
 
 
 _logger = logging.getLogger(__name__)
@@ -26,126 +26,35 @@ def appName() -> str:
     :return: the basename of the command that started the running application.
     """
     if len(sys.argv):
-        return os.path.basename(sys.argv[0])
+        return Path(sys.argv[0]).name
     else:
-        return None
+        return ""
     #else
 #appName
 
 
-def isProperDir(directory: str):
+def isProperDir(directory: str|Path):
     """
     :param directory: path to a directory
 
     :return: True iff directory is an actual directory, and not just a
              soft link to a directory.
     """
-    return os.path.isdir(directory) and not os.path.islink(directory)
+    directory = Path(directory)
+    return directory.is_dir() and not directory.is_symlink()
 #_isProperDir
 
 
-def mkdir(path: str, p = False) -> None:
-    """
-    Extended version of os.mkdir which also implements the -p flag.
-
-    :param path: directory to create
-    :param p:    If true, also create parent directories if necessary.
-                 Also, if true, suppresses FileExistsError if the directory
-                 already exists.
-
-    :raises: ValueError if path is empty.
-    :raises: All exceptions that os.mkdir may raise, like FileExistsError,
-             FileNotFoundError, PermissionError, etc
-    """
-    if path == "":
-        raise ValueError
-    #if
-    if path != os.path.sep and path[-1] == os.path.sep:
-        path = path[:-1]
-    #if
-    try:
-        os.mkdir(path)
-    except FileExistsError as e:
-        if not (os.path.isdir(path) and p):
-            raise e
-        #if
-    except FileNotFoundError as e:
-        parent = os.path.dirname(path)
-        if p and parent != path:
-            mkdir(parent, p)
-            mkdir(path, p)
-        else:
-            raise e
-        #else
-    #except
-#mkdir
-
-
-def resolveAbsPath(inputPath: str) -> str:
-    """
-    Returns an absolute path version of inputPath.
-    If inputPath is an absolute path, returns inputPath.
-    Else, interprets inputPath relative to ${HOME}.
-    If the HOME environment variable is not defined, interprets inputPath
-    relative to the current working directory.
-    """
-    inputPath = os.path.normpath(inputPath)
-
-    if inputPath == os.path.abspath(inputPath):
-        return inputPath
-    #if
-
-    try:
-        home = os.environ["HOME"]
-    except KeyError:
-        _logger.warning("environment variable HOME not defined")
-        home = os.path.abspath(os.path.curdir)
-    #except
-
-    return os.path.join(home, inputPath)
-
-#resolveFileLocation
-
-
-def filenameSplit(filename: str) -> tuple:
-    """
-    Splits a filename into a head (everything before the last dot) and a tail
-    (the "filename extension", i.e. what comes after the last dot.
-    :param filename:
-    :return: tuple (head, tail)
-    :raises: ValueError if filename is empty or ".".
-    """
-    if filename in [ "", "." ]:
-        raise ValueError
-    #if
-
-    if filename[0] == '.':
-        head, tail = filenameSplit(filename[1:])
-        return ".%s" % head, tail
-    #if
-
-    tokens = filename.split(sep='.')
-    if len(tokens) < 2:
-        return filename, ""
-    else:
-        return ".".join(tokens[:-1]), tokens[-1]
-    #else
-#filenameSplit
-
-
-def isHidden(path: str) -> bool:
+def isHidden(path: str|Path) -> bool:
     """
     :return: True if the filename given by path is hidden (i.e. the base name
              starts with dot.
     """
-    if path == "":
+    if isinstance(path, str) and path == "":
         raise ValueError
     #if
-    a, b = os.path.split(path)
-    if b == "":
-        a, b = os.path.split(a)
-    #if
-    return len(b) and b[0] == '.'
+
+    return Path(path).name.startswith(".")
 #isHidden
 
 

@@ -134,3 +134,4 @@ provide a `--long-help` option which produces output similar to a manpage.
 
 * Breaking: removed module **czlogging**.
 * New module **czuioutput**.
+* Breaking: Module **czsystem**: removed functions made redundant by **pathlib**.
