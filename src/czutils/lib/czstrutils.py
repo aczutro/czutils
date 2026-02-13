@@ -12,31 +12,13 @@
 
 """String manipulation utilities."""
 
-from .czlogging import *
-from .cztext import *
+from . import cztext
+
+import logging
 import re
 
 
-_logger = LoggingChannel("czutils.utils.czstrutils",
-                         LoggingLevel.SILENT,
-                         colour=True)
-
-def setLoggingOptions(level: int, colour=True) -> None:
-    """
-    Sets this module's logging level.  If not called, the logging level is
-    SILENT.
-
-    :param level: One of the following:
-                  - czlogging.LoggingLevel.INFO
-                  - czlogging.LoggingLevel.WARNING
-                  - czlogging.LoggingLevel.ERROR
-                  - czlogging.LoggingLevel.SILENT
-
-    :param colour: If true, use colour in log headers.
-    """
-    global _logger
-    _logger = LoggingChannel("czutils.utils.czstrutils", level, colour=colour)
-#setLoggingOptions
+_logger = logging.getLogger(__name__)
 
 
 def grep(pattern: str, text, ignoreCase=False, colour=False) -> list:
@@ -68,7 +50,7 @@ def grep(pattern: str, text, ignoreCase=False, colour=False) -> list:
                 start, end = match.start(), match.end()
                 ans.append("%s%s%s"
                            % (line[:start],
-                              colourise(line[start:end], Col16.RED, bold=True),
+                              cztext.colourise(line[start:end], cztext.Col16.RED, bold=True),
                               line[end:]))
             #if
         else:

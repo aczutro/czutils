@@ -16,9 +16,9 @@ and main routines for applications hide and uhide.
 """
 from .hide import Breaker, CLPHide, CLPUhide
 
-from ..lib import czlogging
-from ..lib import czsystem
+from ..lib import czsystem, czuioutput
 
+import logging
 import shutil
 import os
 import os.path
@@ -31,8 +31,7 @@ def hideUnhide(files: str, bHide: bool,
                abort = False,
                noOverwrite = True,
                verbose = False,
-               loggingChannel = czlogging.LoggingChannel(
-                   '', czlogging.LoggingLevel.SILENT)
+               uiChannel : czuioutput.OutputChannel = czuioutput.DumbOutputChannel(),
                ) -> int:
     """
     Hides or "unhides" files, directories and symlinks.
@@ -54,7 +53,7 @@ def hideUnhide(files: str, bHide: bool,
                             directories).
     :param verbose:         If true, prints executed rename/copy operations to
                             sys.stdout.
-    :param loggingChannel:  a logging channel for warnings and errors.
+    :param uiChannel:       An output channel for warnings and errors.
 
     :return: 0 on success, 1 on fail.  Fail means that at least one rename/copy
              operation has failed.
@@ -74,11 +73,11 @@ def hideUnhide(files: str, bHide: bool,
         nibbles.append('not') # [0]
     #else
     if abort:
-        fComplain = loggingChannel.error
+        fComplain = uiChannel.error
         nibbles.append('') # [1]
         nibbles.append(lambda x: '') # [2]
     else:
-        fComplain = loggingChannel.warning
+        fComplain = uiChannel.warning
         nibbles.append('-- skipping') # [1]
         nibbles.append(lambda x: "-- skipping '%s'" % x) # [2]
     #else
@@ -165,24 +164,25 @@ def _main(CLPcls):
 
     :param CLPcls: command line parser class
     """
-    L = czlogging.LoggingChannel(czsystem.appName(),
-                                 czlogging.LoggingLevel.WARNING)
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.CRITICAL)
+
+    uiout = czuioutput.OutputChannel()
+
     try:
         CLP = CLPcls()
         args = CLP.parseCommandLine()
-        L.info(args)
+        logger.info(args)
         sys.exit(hideUnhide(args.files, args.hide,
                             copy=args.copy,
                             strict=args.strict,
                             abort=args.abort,
                             noOverwrite=args.noOverwrite,
                             verbose=args.verbose,
-                            loggingChannel=L
+                            uiChannel=uiout,
                             ))
-    except AssertionError as e:
-        raise e
     except Exception as e:
-        L.error(e)
+        uiout.error(e)
         sys.exit(2)
     #except
 #_main

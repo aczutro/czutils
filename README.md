@@ -32,7 +32,7 @@ modules are currently available:
 |--------------:|:--------------------------------------------------------------------------|
 |      `czcode` | Help functions for code generation.                                       |
 |  `cziterable` | Generic functions to search in iterables.                                 |
-|   `czlogging` | A wrapper class for the system logger.                                    |
+|  `czuioutput` | A simple system to output messages intended for the user.                 |
 |      `czmath` | Mathematics library.                                                      |
 |   `czoutline` | A document formatter for text displayed on a monospace-text-based medium. |
 |  `czstrutils` | String manipulation functions.                                            |
@@ -129,3 +129,8 @@ provide a `--long-help` option which produces output similar to a manpage.
 * new module **czstrutils** with function **grep**
 * new functions **filenameSplit** and **isHidden** in module **czsystem**
 * new class **SystemCaller** in module **czsystem**
+
+### Version 1.5.0
+
+* Breaking: removed module **czlogging**.
+* New module **czuioutput**.

@@ -15,9 +15,10 @@ Command-line application to format text in a variety of ways.
 """
 from .textformat import CommandLineParser
 
-from ..lib import czlogging, czoutline, cztext, czsystem
+from ..lib import czoutline, cztext
 
 import io
+import logging
 import sys
 
 
@@ -112,29 +113,23 @@ def main():
     """
     Main routine for command-line app 'textformat'.
     """
-    L = czlogging.LoggingChannel(czsystem.appName(),
-                                 czlogging.LoggingLevel.WARNING)
-    try:
-        CLP = CommandLineParser()
-        args = CLP.parseCommandLine()
-        L.info(args)
-        text = sys.stdin.read()
-        ifExists = lambda _key : vars(args)[_key] if _key in vars(args) else None
-        print(textFormat(text, args.action,
-                         align=ifExists('align'),
-                         lineWidth=ifExists('lineWidth'),
-                         lvlWidth=ifExists('lvlWidth'),
-                         processComments=ifExists('processComments'),
-                         printComments=ifExists('printComments'),
-                         boldHeadings=ifExists('boldHeadings')
-                         ))
-        sys.exit(0)
-    except AssertionError as e:
-        raise e
-    except Exception as e:
-        L.error(e)
-        sys.exit(2)
-    #except
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.CRITICAL)
+
+    CLP = CommandLineParser()
+    args = CLP.parseCommandLine()
+    logger.info(args)
+    text = sys.stdin.read()
+    ifExists = lambda _key : vars(args)[_key] if _key in vars(args) else None
+    print(textFormat(text, args.action,
+                     align=ifExists('align'),
+                     lineWidth=ifExists('lineWidth'),
+                     lvlWidth=ifExists('lvlWidth'),
+                     processComments=ifExists('processComments'),
+                     printComments=ifExists('printComments'),
+                     boldHeadings=ifExists('boldHeadings')
+                     ))
+    sys.exit(0)
 #main
 
 

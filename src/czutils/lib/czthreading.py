@@ -12,34 +12,15 @@
 
 """Base classes for asynchronous components that run in their own thread."""
 
-from .czlogging import *
 from .czcode import autoStr
+
+import logging
 import queue
 import threading
 import typing
 
 
-_logger = LoggingChannel("czutils.utils.czthreading",
-                         LoggingLevel.SILENT,
-                         colour=True)
-
-def setLoggingOptions(level: int, colour = True) -> None:
-    """
-    Sets this module's logging level.  If not called, the logging level is
-    SILENT.
-
-    :param level: One of the following:
-                  - czlogging.LoggingLevel.INFO
-                  - czlogging.LoggingLevel.WARNING
-                  - czlogging.LoggingLevel.ERROR
-                  - czlogging.LoggingLevel.SILENT
-
-    :param colour: If true, use colour in log headers.
-    """
-    global _logger
-    _logger = LoggingChannel("czutils.utils.czthreading", level, colour=colour)
-
-#setLoggingOptions
+_logger = logging.getLogger(__name__)
 
 
 @autoStr

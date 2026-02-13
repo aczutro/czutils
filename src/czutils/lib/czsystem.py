@@ -12,33 +12,13 @@
 
 """Help functions related to the (operating) system."""
 
-from .czlogging import *
+import logging
 import os
 import subprocess
 import sys
 
 
-_logger = LoggingChannel("czutils.utils.czsystem",
-                         LoggingLevel.SILENT,
-                         colour=True)
-
-def setLoggingOptions(level: int, colour = True) -> None:
-    """
-    Sets this module's logging level.  If not called, the logging level is
-    SILENT.
-
-    :param level: One of the following:
-                  - czlogging.LoggingLevel.INFO
-                  - czlogging.LoggingLevel.WARNING
-                  - czlogging.LoggingLevel.ERROR
-                  - czlogging.LoggingLevel.SILENT
-
-    :param colour: If true, use colour in log headers.
-    """
-    global _logger
-    _logger = LoggingChannel("czutils.utils.czsystem", level, colour=colour)
-
-#setLoggingOptions
+_logger = logging.getLogger(__name__)
 
 
 def appName() -> str:

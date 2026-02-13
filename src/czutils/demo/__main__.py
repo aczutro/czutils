@@ -14,7 +14,7 @@
 Demo application to show the capabilities of library 'czutils'.
 """
 from .. import __version__
-from ..lib import czoutline, cztext, czthreading, czlogging, czmath
+from ..lib import czmath, czoutline, cztext, czthreading, czuioutput
 
 import argparse
 import io
@@ -23,37 +23,27 @@ import sys
 import time
 
 
-def czloggingDemo():
+def czuioutputDemo():
     """
-    Demo of module 'utils.czlogging'.
+    Demo of module 'lib.czuioutput'.
     """
     OL = czoutline.Outliner()
 
-    OL.h1("czlogging demo")
+    OL.h1("czuioutput demo")
 
     OL.verbatim("")
 
-    logger = czlogging.LoggingChannel("default logger",
-                                      czlogging.LoggingLevel.INFO)
-    logger.info("This is an info message.")
-    logger.warning("This is a warning.")
-    logger.error("This is an error message.")
+    uiout = czuioutput.OutputChannel()
+    uiout.info("This is an info message.")
+    uiout.warning("This is a warning.")
+    uiout.error("This is an error message.")
 
-    OL.verbatim("")
+#czuioutputDemo
 
-    logger = czlogging.LoggingChannel("colour logger",
-                                      czlogging.LoggingLevel.INFO,
-                                      colour=True)
-    logger.info("This is an info message.")
-    logger.warning("This is a warning.")
-    logger.error("This is an error message.")
-
-
-#czloggingDemo
 
 def czmathDemo():
     """
-    Demo of module 'utils.czmath'.
+    Demo of module 'lib.czmath'.
     """
     OL = czoutline.Outliner(h2Style=czoutline.Style.BOLD,
                             h3Style=czoutline.Style.BOLD
@@ -84,7 +74,7 @@ def czmathDemo():
 
 def czoutlineDemo():
     """
-    Demo of module 'utils.czoutline'.
+    Demo of module 'lib.czoutline'.
     """
     OL = czoutline.Outliner()
 
@@ -282,7 +272,7 @@ def czoutlineDemo():
 
 def cztextDemo():
     """
-    Demo of module 'utils.cztext'.
+    Demo of module 'lib.cztext'.
     """
     OL = czoutline.Outliner(h2Style=czoutline.Style.BOLD,
                             h3Style=czoutline.Style.BOLD)
@@ -377,23 +367,23 @@ paws one  after   the    other to get rid of the\tsleepy
 
 
 class Ping(czthreading.Message):
-    """Message class for utils.czthreading demo."""
+    """Message class for 'lib.czthreading' demo."""
     pass
 #def
 
 class Pong(czthreading.Message):
-    """Message class for utils.czthreading demo."""
+    """Message class for 'lib.czthreading' demo."""
     pass
 #def
 
 class Peng(czthreading.Message):
-    """Message class for utils.czthreading demo."""
+    """Message class for 'lib.czthreading' demo."""
     pass
 #def
 
 class Player(czthreading.ReactiveThread):
     """
-    Asynchronous component for utils.czthreading demo.
+    Asynchronous component for 'lib.czthreading' demo.
     """
     def __init__(self, name: str, OL: czoutline.Outliner):
         super().__init__(name, None)
@@ -423,12 +413,10 @@ class Player(czthreading.ReactiveThread):
 
 def czthreadingDemo():
     """
-    Demo of module 'utils.czthreading'.
+    Demo of module 'lib.czthreading'.
     """
     OL = czoutline.Outliner()
     OL.h1("czthreading demo")
-
-    czthreading.setLoggingOptions(czlogging.LoggingLevel.WARNING)
 
     p1 = Player("ping-player", OL)
     p2 = Player("pong-player", OL)
@@ -481,11 +469,11 @@ def main():
     G2 = G2.add_mutually_exclusive_group()
 
     aa = lambda o, h: G2.add_argument(o, action="store_true", help=h)
-    aa("-logging", "run czlogging demo")
     aa("-math", "run czmath demo")
     aa("-outline", "run czoutline demo")
     aa("-text", "run cztext demo")
     aa("-threading", "run czthreading demo")
+    aa("-uioutput", "run uioutput demo")
 
     A = P.parse_args()
 
@@ -493,7 +481,7 @@ def main():
         OL = czoutline.Outliner()
         sep = lambda : OL.h1(
             "===============================================================================")
-        czloggingDemo()
+        czuioutputDemo()
         sep()
         czmathDemo()
         sep()
@@ -503,8 +491,8 @@ def main():
         sep()
         czthreadingDemo()
         sep()
-    elif A.logging:
-        czloggingDemo()
+    elif A.uioutput:
+        czuioutputDemo()
     elif A.math:
         czmathDemo()
     elif A.outline:

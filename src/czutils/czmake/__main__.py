@@ -15,8 +15,9 @@ Turns a plain list of commands into a Makefile.
 """
 from .czmake import CommandLineParser
 
-from ..lib import czlogging, czsystem
+from ..lib import czuioutput
 
+import logging
 import os.path
 import sys
 
@@ -144,25 +145,23 @@ def main():
     """
     Main routine for command-line app czmake.
     """
-    L = czlogging.LoggingChannel(czsystem.appName(),
-                                 czlogging.LoggingLevel.WARNING)
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.CRITICAL)
+
+    uiout = czuioutput.OutputChannel()
+
     try:
         CLP = CommandLineParser()
         args = CLP.parseCommandLine()
-        L.info(args)
+        logger.info(args)
         sys.exit(czmake(inputFile=args.inputFile,
                         targetDir=args.logDir,
                         overwrite=args.overwrite,
                         preserve=args.preserve
                         ))
-    except AssertionError as e:
-        raise e
     except CZMakeError as e:
-        L.error(e)
+        uiout.error(e)
         sys.exit(1)
-    except Exception as e:
-        L.error(e)
-        sys.exit(2)
     #except
 #main
 
