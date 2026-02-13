@@ -19,7 +19,7 @@ import re
 _BLANKS = " \t\f\v\r\n"
 
 
-def paragraphy(text) -> list:
+def paragraphy(text: str | list[str] | tuple[str]) -> list:
     """
     Splits text into paragraphs.  Detects paragraph breaks by searching for
     empty lines.  Does not produce empty paragraphs.  I.e., e.g., that
@@ -40,7 +40,7 @@ def paragraphy(text) -> list:
     if isinstance(text, str):
         return paragraphy(text.strip(_BLANKS).splitlines())
 
-    elif isinstance(text, list):
+    elif isinstance(text, list) or isinstance(text, tuple):
         ans = []
         N = len(text)
         begin = 0
@@ -64,7 +64,9 @@ def paragraphy(text) -> list:
 #paragraphy
 
 
-def fill(text, lineWidth : int) -> list:
+def fill(text: str | list[str] | tuple[str],
+         lineWidth : int,
+         ) -> list:
     """
     Reformats the input text so that all lines are filled with a maximum length
     of 'lineWidth' characters.  Makes sure that all periods that end a sentence
@@ -91,7 +93,7 @@ def fill(text, lineWidth : int) -> list:
 
     if isinstance(text, str):
         tokens = tokenise(text)
-    elif isinstance(text, list):
+    elif isinstance(text, list) or isinstance(text, tuple):
         tokens = list(itertools.chain.from_iterable(
             [ tokenise(s) for s in text if s.strip(_BLANKS) ]))
     else:
@@ -143,7 +145,8 @@ def fill(text, lineWidth : int) -> list:
 #fill
 
 
-def align(lines: list, alignArg: str,
+def align(lines: list[str],
+          alignArg: str,
           tabWidth: int = 4,
           collapseSpaces: bool = False
           ) -> list:
