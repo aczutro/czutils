@@ -12,41 +12,19 @@
 
 """An easy-to-use timer."""
 
+import enum
 import time
 
 
-class TimerType:
-    """
-    "Data type" for Timer.
-    """
-    WALLCLOCK, CPU = range(2)
-
-    @staticmethod
-    def invalid(timerType):
-        """
-        :returns: True if 'timerType' is not TimerType.WALLCLOCK or TimerType.CPU.
-        """
-        return timerType not in range(2)
-    #invalid
-
+class TimerType(enum.Enum):
+    WALLCLOCK = enum.auto()
+    CPU = enum.auto()
 #TimerType
 
 
-class TimerResolution:
-    """
-    "Data type" for Timer.
-    """
-    NS, S = range(2)
-
-
-    @staticmethod
-    def invalid(res):
-        """
-        :returns: True if 'res' is not TimerResolution.NS or TimerResolution.S.
-        """
-        return res not in range(2)
-    #invalid
-
+class TimerResolution(enum.Enum):
+    NS = enum.auto()
+    S = enum.auto()
 #TimerResolution
 
 
@@ -76,12 +54,8 @@ class Timer:
             self.f = time.process_time
         elif (timerType, res) == (TimerType.CPU, TimerResolution.NS):
             self.f = time.process_time_ns
-        elif TimerType.invalid(timerType):
-            raise ValueError(
-                "'timerType' must be TimerType.WALLCLOCK or TimerType.CPU")
         else:
-            raise ValueError(
-                "'res' must be TimerResolution.NS or TimerResolution.S")
+            assert False, "impossible value combination of TimerType and TimerResolution"
         #else
 
         self.start = self.f()
