@@ -13,8 +13,8 @@
 """
 Demo application to show the capabilities of library 'czutils'.
 """
-from ..private import __versionString__
-from ..utils import czoutline, cztext, czthreading, czlogging, czmath
+from .. import __version__
+from ..lib import czoutline, cztext, czthreading, czlogging, czmath
 
 import argparse
 import io
@@ -470,7 +470,7 @@ def main():
                                 add_help=True)
     P.add_argument("--version",
                    action="version",
-                   version=__versionString__
+                   version=f"czutils version {__version__}"
                    )
     G1 = P.add_argument_group()
     G1.add_argument("-all",
@@ -519,6 +519,11 @@ def main():
 
     sys.exit(0)
 #main
+
+
+if __name__ == '__main__':
+    main()
+#if
 
 
 ### aczutro ###################################################################

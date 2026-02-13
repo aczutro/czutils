@@ -14,7 +14,14 @@
 A "universal" Python library and collection of useful command line utilities.
 """
 
+import importlib.metadata
+
+try:
+    __version__ = importlib.metadata.version(__package__ or __name__)
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "0.0.0"
+#except
+
 __author__ = "Alexander Czutro <github@czutro.ch>"
-__version__ = "1.4.1"
 
 ### aczutro ###################################################################

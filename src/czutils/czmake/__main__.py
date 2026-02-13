@@ -13,10 +13,9 @@
 """
 Turns a plain list of commands into a Makefile.
 """
-from ..private.czmake import CommandLineParser
+from .czmake import CommandLineParser
 
-from ..utils import czlogging
-from ..utils import czsystem
+from ..lib import czlogging, czsystem
 
 import os.path
 import sys
@@ -67,6 +66,8 @@ def czmake(inputFile: str = None,
     :raises: czmake does NOT catch exceptions raised by OS-interacting functions
              like os.mkdir or io.open.
     """
+
+    commands = []
 
     if inputFile is None:
         inputFile = ""
@@ -164,6 +165,11 @@ def main():
         sys.exit(2)
     #except
 #main
+
+
+if __name__ == '__main__':
+    main()
+#if
 
 
 ### aczutro ###################################################################

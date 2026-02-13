@@ -14,7 +14,7 @@
 A document formatter for text displayed on a purely text-based medium, like the
 command line terminal or the text editor.
 """
-from ..utils import czmath, cztext
+from ..lib import czmath, cztext
 
 import re
 import sys

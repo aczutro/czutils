@@ -13,9 +13,9 @@
 """
 Command-line application to format text in a variety of ways.
 """
-from ..private.textformat import CommandLineParser
+from .textformat import CommandLineParser
 
-from ..utils import czlogging, czoutline, cztext, czsystem
+from ..lib import czlogging, czoutline, cztext, czsystem
 
 import io
 import sys
@@ -136,6 +136,11 @@ def main():
         sys.exit(2)
     #except
 #main
+
+
+if __name__ == '__main__':
+    main()
+#if
 
 
 ### aczutro ###################################################################

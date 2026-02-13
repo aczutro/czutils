@@ -141,14 +141,14 @@ def filenameSplit(filename: str) -> tuple:
 
     if filename[0] == '.':
         head, tail = filenameSplit(filename[1:])
-        return (".%s" % head, tail)
+        return ".%s" % head, tail
     #if
 
     tokens = filename.split(sep='.')
     if len(tokens) < 2:
-        return (filename, "")
+        return filename, ""
     else:
-        return (".".join(tokens[:-1]), tokens[-1])
+        return ".".join(tokens[:-1]), tokens[-1]
     #else
 #filenameSplit
 

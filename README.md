@@ -47,6 +47,7 @@ The  command-line  application  `czutils-demo`  provides  examples  of
 usage.   In addition,  all functions  and classes  that belong  to the
 public interface include detailed docstrings.
 
+
 ### The application library
 
 The **application  library** is implemented in  Subpackage `app`.  The
@@ -61,64 +62,15 @@ Python applications.
 
 |                |              |                                                            |
 |---------------:|-------------:|:-----------------------------------------------------------|
-| `czutils-demo` | `demo`       | Demo application to illustrate the library's capabilities. |
-| `czmake`       | `czmake`     | Turns a plain list of commands into a Makefile.            |
-| `hide`         | `hide`       | Hides files (prepends a dot to their names).               |
-| `uhide`        | `hide`       | "Unhides" files (removes leading dots from their names).   |
-| `textformat`   | `textformat` | Formats text-based documents for display on the terminal.  |
+| `czutils-demo` |       `demo` | Demo application to illustrate the library's capabilities. |
+|       `czmake` |     `czmake` | Turns a plain list of commands into a Makefile.            |
+|         `hide` |       `hide` | Hides files (prepends a dot to their names).               |
+|        `uhide` |       `hide` | "Unhides" files (removes leading dots from their names).   |
+|   `textformat` | `textformat` | Formats text-based documents for display on the terminal.  |
 
 All applications provide  help when invoked  with the `--help` option.
 Some also provide a `--long-help` option which produces output similar
 to a manpage.
-
-## Installation
-
-### The quick way
-
-Change into  the root directory  of this distribution (where  the file
-`pyproject.toml` is) and run the following command:
-
-```shell
-pip install .
-```
-
-This will install  the library **czutils** at a  location where python
-will  find it,  independently of  which directory  you're in  when you
-invoke python.
-
-To access the functionality of the library from within the interactive
-Python console or from another Python application, import it with
-
-```python
-import czutils
-```
-
-Documentation can be accessed with `help(czutils)`.
-
-Pip  will   also  install  the   executable  scripts  listed   in  the
-*application library* table.
-
-If you are not *root* when  you run the installation command, Pip will
-install the library and executables locally in your home.
-
-To undo the installation, simply do:
-
-```shell
-pip uninstall czutils
-```
-
-### The manual way
-
-1. Copy or move the directory  `src/czutils` to any location you like,
-   for example `$HOME/python/czutils`.
-
-2. Continuing with this example, add `$HOME/python` to the environment
-   variable `PYTHONPATH`.
-
-3. Copy  or  move  the  executable scripts  located  in  `bin` to  any
-   location you like, for example `$HOME/bin`.
-   
-4. Make sure that `$HOME/bin` is in your `PATH` variable.
 
 
 ## Changelog

@@ -12,10 +12,10 @@
 #
 ################################################################### aczutro ###
 
-import czutils.app
+from czutils.czmake import main
 
 if __name__ == '__main__':
-    czutils.app.mainCZMake()
+    main()
 #if
 
 ### aczutro ###################################################################

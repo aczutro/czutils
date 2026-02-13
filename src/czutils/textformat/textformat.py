@@ -13,9 +13,9 @@
 """
 "Private" help classes and functions used by module app.textformat.
 """
-from . import __versionString__
+from .. import __version__
 
-from ..utils import czoutline
+from ..lib import czoutline
 
 import argparse
 import os
@@ -169,7 +169,7 @@ class CommandLineParser:
                                     add_help=True)
         P.add_argument("--version",
                        action="version",
-                       version=__versionString__
+                       version=f"czutils version {__version__}"
                        )
         G1 = P.add_argument_group("actions")
         G1 = G1.add_mutually_exclusive_group()

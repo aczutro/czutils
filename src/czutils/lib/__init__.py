@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # Copyright (C) 2005 - present  Alexander Czutro <github@czutro.ch>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -12,10 +10,6 @@
 #
 ################################################################### aczutro ###
 
-from czutils.demo import main
-
-if __name__ == '__main__':
-    main()
-#if
+"""czutils library package."""
 
 ### aczutro ###################################################################

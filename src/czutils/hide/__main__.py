@@ -14,10 +14,10 @@
 Function to hide and "unhide" files,
 and main routines for applications hide and uhide.
 """
-from ..private.hide import Breaker, CLPHide, CLPUhide
+from .hide import Breaker, CLPHide, CLPUhide
 
-from ..utils import czlogging
-from ..utils import czsystem
+from ..lib import czlogging
+from ..lib import czsystem
 
 import shutil
 import os
@@ -25,7 +25,7 @@ import os.path
 import sys
 
 
-def hideUnhide(files: str, hide: bool,
+def hideUnhide(files: str, bHide: bool,
                copy = False,
                strict = False,
                abort = False,
@@ -39,7 +39,7 @@ def hideUnhide(files: str, hide: bool,
 
     :param files:           List of strings: each string is a path to a file,
                             directory or symlink.
-    :param hide:            If true, hides files.  If false, unhides them.
+    :param bHide:            If true, hides files.  If false, unhides them.
     :param copy:            If true, instead of renaming the file, makes a
                             hidden/unhidden copy.
     :param strict:          In hide mode: If true, refuses to "hide hidden
@@ -63,12 +63,12 @@ def hideUnhide(files: str, hide: bool,
     :raises: hideUnhide does NOT catch exceptions raised by OS-interacting
              functions like shutil.copy2, shutil.copytree or os.replace.
     """
-    if hide is None:
+    if bHide is None:
         raise ValueError("'args.hide' must not be None")
     #if
 
     nibbles = []
-    if hide:
+    if bHide:
         nibbles.append('already') # [0]
     else:
         nibbles.append('not') # [0]
@@ -116,7 +116,7 @@ def hideUnhide(files: str, hide: bool,
             #if
 
             newName = None
-            if hide:
+            if bHide:
                 if filename[0] != '.' or not strict:
                     newName = '.' + filename
                 #if
@@ -159,9 +159,9 @@ def hideUnhide(files: str, hide: bool,
 #_execute
 
 
-def _mainTemplate(CLPcls):
+def _main(CLPcls):
     """
-    Template for mainHide and mainUhide.
+    Template for hide and uhide.
 
     :param CLPcls: command line parser class
     """
@@ -185,23 +185,28 @@ def _mainTemplate(CLPcls):
         L.error(e)
         sys.exit(2)
     #except
-#mainHide
+#_main
 
 
-def mainHide():
+def hide():
     """
     Main routine for command-line app hide.
     """
-    _mainTemplate(CLPHide)
-#mainHide
+    _main(CLPHide)
+#hide
 
 
-def mainUhide():
+def uhide():
     """
     Main routine for command-line app uhide.
     """
-    _mainTemplate(CLPUhide)
-#mainUhide
+    _main(CLPUhide)
+#uhide
+
+
+if __name__ == '__main__':
+    hide()
+#if
 
 
 ### aczutro ###################################################################

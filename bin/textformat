@@ -12,10 +12,10 @@
 #
 ################################################################### aczutro ###
 
-import czutils.app
+from czutils.textformat import main
 
 if __name__ == '__main__':
-    czutils.app.mainTextFormat()
+    main()
 #if
 
 ### aczutro ###################################################################

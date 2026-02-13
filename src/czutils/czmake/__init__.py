@@ -1,4 +1,4 @@
-# Copyright (C) 2005 - present  Alexander Czutro <github@czutro.ch>
+# Copyright (C) 2026 - present  Alexander Czutro <github@czutro.ch>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -10,8 +10,8 @@
 #
 ################################################################### aczutro ###
 
-"""Basic library package."""
+"""..."""
 
-from .. import __version__, __author__
+from .__main__ import main
 
 ### aczutro ###################################################################
