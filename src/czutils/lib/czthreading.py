@@ -17,7 +17,7 @@ from .czcode import autoStr
 import logging
 import queue
 import threading
-import typing
+from typing import Callable
 
 
 _logger = logging.getLogger(__name__)
@@ -226,7 +226,7 @@ class ReactiveThread(Thread):
 
     def addMessageProcessor(self,
                             messageType: str,
-                            method: typing.Callable[[Message], None]) -> None:
+                            method: Callable[[Message], None]) -> None:
         """
         Register a message processor, i.e. a method that will be used to process
         messages of a particular class.
