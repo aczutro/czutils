@@ -10,7 +10,7 @@
 #
 ################################################################### aczutro ###
 
-"""Generic functions to search in iterables."""
+"""Help functions to search in iterables."""
 
 
 def findFirstOf(iterable, candidates) -> int:

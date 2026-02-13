@@ -10,9 +10,7 @@
 #
 ################################################################### aczutro ###
 
-"""
-Mathematics library.
-"""
+"""Mathematics library."""
 
 _arabic2romanMap = (
     (1000, 'M'),
@@ -50,7 +48,6 @@ def arabic2roman(n: int) -> str:
     #for
     return ''.join(ans)
 #arabic2roman
-
 
 
 ### aczutro ###################################################################

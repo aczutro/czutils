@@ -18,7 +18,7 @@ from ..lib import czmath, cztext
 
 import re
 import sys
-import typing
+from typing import Callable, TextIO
 
 
 class Style:
@@ -108,7 +108,7 @@ class Outliner:
     """
 
     def __init__(self,
-                 stream: typing.TextIO = sys.stdout,
+                 stream: TextIO = sys.stdout,
                  processComments: bool = True,
                  printComments: bool = False,
                  lineWidth: int = 70,
@@ -116,12 +116,12 @@ class Outliner:
                  spacedLItems : bool = False,
                  spacedDItems : bool = True,
                  maxFirstIndex: int = 9,
-                 h1Style: typing.Callable[[str], str] = Style.BOLD_YELLING,
-                 h2Style: typing.Callable[[str], str] = Style.BOLD_TITLE,
-                 h3Style: typing.Callable[[str], str] = Style.BOLD_TITLE,
-                 bulletStyle: typing.Callable[[str], str] = Style.BOLD,
-                 numberStyle: typing.Callable[[str], str] = Style.ARABIC_DOT,
-                 keyStyle: typing.Callable[[str], str] = Style.BOLD
+                 h1Style: Callable[[str], str] = Style.BOLD_YELLING,
+                 h2Style: Callable[[str], str] = Style.BOLD_TITLE,
+                 h3Style: Callable[[str], str] = Style.BOLD_TITLE,
+                 bulletStyle: Callable[[str], str] = Style.BOLD,
+                 numberStyle: Callable[[str], str] = Style.ARABIC_DOT,
+                 keyStyle: Callable[[str], str] = Style.BOLD
                  ):
         """
 
@@ -204,7 +204,7 @@ class Outliner:
     #__init__
 
 
-    def setH1Style(self, style: typing.Callable[[str], str]):
+    def setH1Style(self, style: Callable[[str], str]):
         """
         Sets style for level-1 headers.
 
@@ -215,7 +215,7 @@ class Outliner:
     #setH1Style
 
 
-    def setH2Style(self, style: typing.Callable[[str], str]):
+    def setH2Style(self, style: Callable[[str], str]):
         """
         Sets style for level-2 headers.
 
@@ -226,7 +226,7 @@ class Outliner:
     #setH2Style
 
 
-    def setH3Style(self, style: typing.Callable[[str], str]):
+    def setH3Style(self, style: Callable[[str], str]):
         """
         Sets style for level-3 headers.
 
@@ -297,7 +297,7 @@ class Outliner:
     #h3
 
 
-    def _h(self, line: str, level: int, fStyle: typing.Callable[[str], str]):
+    def _h(self, line: str, level: int, fStyle: Callable[[str], str]):
         """
         Prints a level-n header.
 
@@ -368,7 +368,7 @@ class Outliner:
 
     def ul(self,
            spacedLItems: bool = None,
-           bulletStyle: typing.Callable[[str], str] = None
+           bulletStyle: Callable[[str], str] = None
            ):
         """
         Starts an unordered (bulleted) list.
@@ -397,8 +397,8 @@ class Outliner:
     def ol(self,
            n : int = 1,
            spacedLItems: bool = None,
-           bulletStyle: typing.Callable[[str], str] = None,
-           numberStyle: typing.Callable[[str], str] = None
+           bulletStyle: Callable[[str], str] = None,
+           numberStyle: Callable[[str], str] = None
            ):
         """
         Starts an ordered (numbered) list.
@@ -438,7 +438,7 @@ class Outliner:
 
     def dl(self,
            spacedDItems: bool = None,
-           keyStyle: typing.Callable[[str], str] = None
+           keyStyle: Callable[[str], str] = None
            ):
         """
         Starts a dictionary list, i.e. a list where each list item

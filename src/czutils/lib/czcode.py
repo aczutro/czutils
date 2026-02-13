@@ -10,7 +10,7 @@
 #
 ################################################################### aczutro ###
 
-"""Help functions for code generation."""
+"""Coding helpers."""
 
 
 def autoStr(cls):
