@@ -1,4 +1,4 @@
-# Copyright (C) 2005 - present  Alexander Czutro <github@czutro.ch>
+# Copyright (C) 2026 - present  Alexander Czutro <github@czutro.ch>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,72 +11,131 @@
 ################################################################### aczutro ###
 
 """
-"Private" help classes and functions for module app.czmake.
+Turns a plain list of commands into a Makefile.
 """
-from .. import __version__
 
-import argparse
+from .clp import Args
+
+from pathlib import Path
+import sys
 
 
-class CommandLineParser:
+class CZMakeError(Exception):
+    """
+    Exception raised by function czmake.
+    """
+    pass
+#CZMakeError
 
-    def __init__(self):
-        self.appDescription = "Turns a plain list of commands into a Makefile. "\
-                              "Each line is understood as a command. "\
-                              "Lines starting with # are regarded as comments. "
-    # __init__
 
-    def parseCommandLine(self) -> argparse.Namespace:
-        """
-        Parses command line.
+def czmake(args: Args) -> int:
+    """
+    Reads a plain list of shell commands either from file or from sys.stdin
+    and creates a 'Makefile' in which each command is an individual target.
 
-        :returns: All arguments and flags bundled in an Args object.
-        """
-        P = argparse.ArgumentParser(description=self.appDescription,
-                                    add_help=True)
-        P.add_argument("--version",
-                       action="version",
-                       version=f"czutils version {__version__}"
-                       )
-        P.add_argument("inputFile",
-                       metavar="INPUT_FILE",
-                       type=str,
-                       nargs='?',
-                       help="File with a plain list of commands to execute. "
-                            "If '-' or omitted, reads from STDIN."
-                       )
-        G1 = P.add_argument_group()
-        G1.add_argument("-l",
-                        metavar="LOG_DIR",
-                        dest="logDir",
-                        type=str,
-                        default=".targets",
-                        help="Store log files in this directory. "
-                             " Default: '%(default)s'"
-                        )
-        G2 = P.add_argument_group()
-        G2.add_argument("-o",
-                        dest="overwrite",
-                        action="store_true",
-                        help="If file 'Makefile' exists, overwrite it silently."
-                        )
-        G2.add_argument("-p",
-                        dest="preserve",
-                        action="store_true",
-                        help="Preserve input file, i.e. 'make clean' will not "
-                             "delete it"
-                        )
-        container = P.parse_args()
+    All targets are invoked by the 'all' target, so a call to "make [all]" will
+    execute all commands and create an individual log file for each command.
+    The 'Makefile' is formulated such that a second call to "make" will execute
+    only the commands that failed the first time.
 
-        if container.inputFile == '-':
-            container.inputFile = None
-        #if
+    The 'Makefile' also includes a 'clean' target that will remove the original
+    input file, the 'Makefile' itself, and all the log files.
 
-        return container
+    Each input line is interpreted as an individual command.
+    Lines starting with # are regarded as comments.
 
-    #def parse_args
+    :param args:    inputFile: Path to file containing shell commands.
+                               If it is None, reads from sys.stdin.
+                    targetDir: Path to directory where target and log files are
+                               to be stored.  If a file or directory with that
+                               name already exists, raises CZMakeError.
+                    overwrite: If true, overwrites file 'Makefile' silently.
+                               If false and 'Makefile' already exists,
+                               raises CZMakeError.
+                               Does not apply to 'targetDir'.
+                    preserve:  If true, preserves input file, i.e. 'make clean'
+                               will not delete it.
 
-#CommandLineParser
+    :returns: 0 on success.
+
+    :raises: CZMakeError
+    :raises: czmake does NOT catch exceptions raised by OS-interacting functions
+             like os.mkdir or io.open.
+    """
+
+    commands = []
+
+    if args.inputFile is None:
+        inputFile = ""
+        commands = sys.stdin.read().splitlines()
+    else:
+        inputFile = str(args.inputFile)
+        with open(args.inputFile, "r") as fileHandle:
+            commands = fileHandle.read().splitlines()
+        #with
+    #else
+
+    if args.preserve:
+        inputFile = ""
+    #if
+
+    makefile = Path("Makefile")
+    if makefile.exists() and not args.overwrite:
+        raise CZMakeError(f"Can't overwrite '{makefile}'.")
+    #if
+
+    try:
+        args.targetDir.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        raise CZMakeError(e)
+    #except
+
+    with open(makefile, "w") as makefileHandle:
+        write = lambda msg : print(msg, file=makefileHandle)
+
+        write("first: all")
+        write("")
+
+        targets = []
+        logs = []
+
+        targetCounter = 1
+        for command in commands:
+            command = command.lstrip(" \t")
+
+            if not command or command[0] == '#':
+                continue
+            #if
+
+            target = args.targetDir / f"{targetCounter:03d}"
+            targets.append(str(target))
+
+            log = f"{target}.log"
+            logs.append(log)
+
+            write("%s:" % target)
+            write("\t(%s && touch %s) 2>&1 | tee %s" % (command, target, log))
+            write("")
+
+            targetCounter += 1
+        #for
+
+        if args.targetDir.samefile(Path.cwd()):
+            targetDir = ' '.join(targets + logs)
+        else:
+            targetDir = str(args.targetDir)
+        #else
+
+        write("all: %s" % " ".join(targets))
+        write("")
+        write(".PHONY: clean")
+        write("")
+        write("clean:")
+        write(f"\trm -rf {targetDir} {inputFile} {makefile}")
+    #with
+
+    return 0
+#czmake
 
 
 ### aczutro ###################################################################
