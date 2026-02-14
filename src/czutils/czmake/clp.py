@@ -11,7 +11,7 @@
 ################################################################### aczutro ###
 
 """
-"Private" help classes and functions for module app.czmake.
+Command line parser for czmake.
 """
 from .. import __version__
 

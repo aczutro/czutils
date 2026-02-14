@@ -18,6 +18,7 @@ from .clp import CommandLineParser
 from .czmake import CZMakeError, czmake
 from ..lib import czuioutput
 
+import logging
 import sys
 
 
@@ -25,11 +26,13 @@ def main():
     """
     Main routine for command-line app czmake.
     """
+    logging.basicConfig(level=logging.CRITICAL)
     uiout = czuioutput.OutputChannel()
 
     try:
         clp = CommandLineParser()
         args = clp.parseCommandLine()
+        logging.info(args)
         sys.exit(czmake(args))
     except CZMakeError as e:
         uiout.error(e)
