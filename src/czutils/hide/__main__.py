@@ -11,151 +11,14 @@
 ################################################################### aczutro ###
 
 """
-Function to hide and "unhide" files,
-and main routines for applications hide and uhide.
+Main routines for apps 'hide' and 'uhide'.
 """
-from .hide import Breaker, CLPHide, CLPUhide
-
-from ..lib import czsystem, czuioutput
+from .clp import CLPHide, CLPUhide
+from .hide import hideUnhide
+from ..lib import czuioutput
 
 import logging
-import shutil
-import os
-import os.path
 import sys
-
-
-def hideUnhide(files: str, bHide: bool,
-               copy = False,
-               strict = False,
-               abort = False,
-               noOverwrite = True,
-               verbose = False,
-               uiChannel : czuioutput.OutputChannel = czuioutput.DumbOutputChannel(),
-               ) -> int:
-    """
-    Hides or "unhides" files, directories and symlinks.
-
-    :param files:           List of strings: each string is a path to a file,
-                            directory or symlink.
-    :param bHide:            If true, hides files.  If false, unhides them.
-    :param copy:            If true, instead of renaming the file, makes a
-                            hidden/unhidden copy.
-    :param strict:          In hide mode: If true, refuses to "hide hidden
-                            files".
-                            (If false, hiding ".file" means renaming it to
-                            "..file".)
-                            In unhide mode: If true, "completely unhides" files,
-                            i.e. "..file" becomes "file".  (If false, "..file"
-                            becomes ".file".)
-    :param abort:           If true, aborts on first failure.
-    :param noOverwrite:     If false, silently overwrite target files (but not
-                            directories).
-    :param verbose:         If true, prints executed rename/copy operations to
-                            sys.stdout.
-    :param uiChannel:       An output channel for warnings and errors.
-
-    :return: 0 on success, 1 on fail.  Fail means that at least one rename/copy
-             operation has failed.
-
-    :raises: ValueError
-    :raises: hideUnhide does NOT catch exceptions raised by OS-interacting
-             functions like shutil.copy2, shutil.copytree or os.replace.
-    """
-    if bHide is None:
-        raise ValueError("'args.hide' must not be None")
-    #if
-
-    nibbles = []
-    if bHide:
-        nibbles.append('already') # [0]
-    else:
-        nibbles.append('not') # [0]
-    #else
-    if abort:
-        fComplain = uiChannel.error
-        nibbles.append('') # [1]
-        nibbles.append(lambda x: '') # [2]
-    else:
-        fComplain = uiChannel.warning
-        nibbles.append('-- skipping') # [1]
-        nibbles.append(lambda x: "-- skipping '%s'" % x) # [2]
-    #else
-
-    if copy:
-        fRename = (lambda _src, _dst: shutil.copy2(_src, _dst, follow_symlinks=False),
-                   lambda _src, _dst: shutil.copytree(_src, _dst, symlinks=True,
-                                                      ignore_dangling_symlinks=True)
-                   )
-    else:
-        fRename = (lambda _src, _dst: os.replace(_src, _dst),
-                   lambda _src, _dst: os.replace(_src, _dst)
-                   )
-    #else
-
-    exitCode = 0
-
-    for src in files:
-        src = src.rstrip(os.sep)
-        directory = os.path.dirname(src)
-        filename = os.path.basename(src)
-
-        try:
-            if not src: # may occur if original argument was '/'
-                fComplain("you don't want to operate on '%s'" % os.sep, nibbles[1])
-                raise Breaker()
-            #if
-            if filename in [ os.curdir, os.pardir ]:
-                fComplain("you don't want to operate on '%s'" % src, nibbles[1])
-                raise Breaker()
-            #if
-            if not os.path.exists(src) and not os.path.islink(src):
-                fComplain("file '%s' doesn't exist" % src)
-                raise Breaker()
-            #if
-
-            newName = None
-            if bHide:
-                if filename[0] != '.' or not strict:
-                    newName = '.' + filename
-                #if
-            else:
-                if filename[0] == '.':
-                    if strict:
-                        newName = filename.strip('.')
-                    else:
-                        newName = filename[1:]
-                    #else
-                #if
-            #else
-            if newName is None:
-                fComplain("file '%s' is" % src, nibbles[0], 'hidden')
-                raise Breaker()
-            #if
-
-            dst = os.path.join(directory, newName)
-            if os.path.exists(dst) and\
-                    (noOverwrite or czsystem.isProperDir(dst)):
-                fComplain("destination '%s' already exists" % dst, nibbles[2](src))
-                raise Breaker()
-            #if
-
-            fRename[int(czsystem.isProperDir(src))](src, dst)
-
-            if verbose:
-                print("'%s' -> '%s'" % (src, dst))
-            #if
-        except Breaker:
-            if abort:
-                return 1
-            else:
-                exitCode = 1
-            #else
-        #except
-    #for
-
-    return exitCode
-#_execute
 
 
 def _main(CLPcls):
@@ -164,33 +27,28 @@ def _main(CLPcls):
 
     :param CLPcls: command line parser class
     """
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.CRITICAL)
+    logging.basicConfig(level=logging.CRITICAL)
 
     uiout = czuioutput.OutputChannel()
 
+    CLP = CLPcls()
+    args = CLP.parseCommandLine()
+    logging.info(args)
+
     try:
-        CLP = CLPcls()
-        args = CLP.parseCommandLine()
-        logger.info(args)
-        sys.exit(hideUnhide(args.files, args.hide,
-                            copy=args.copy,
-                            strict=args.strict,
-                            abort=args.abort,
-                            noOverwrite=args.noOverwrite,
-                            verbose=args.verbose,
+        sys.exit(hideUnhide(args,
                             uiChannel=uiout,
-                            ))
-    except Exception as e:
-        uiout.error(e)
-        sys.exit(2)
+                            )
+                 )
+    except ValueError as e:
+        assert False, str(e)
     #except
 #_main
 
 
 def hide():
     """
-    Main routine for command-line app hide.
+    Main routine for command-line app 'hide'.
     """
     _main(CLPHide)
 #hide
@@ -198,14 +56,17 @@ def hide():
 
 def uhide():
     """
-    Main routine for command-line app uhide.
+    Main routine for command-line app 'uhide'.
     """
     _main(CLPUhide)
 #uhide
 
 
 if __name__ == '__main__':
-    hide()
+    _uiout = czuioutput.OutputChannel()
+    _uiout.error("This file cannot be executed directly. "
+                 "It provides two main routines: 'hide' and 'uhide'.")
+    sys.exit(3)
 #if
 
 

@@ -11,7 +11,7 @@
 ################################################################### aczutro ###
 
 """
-Command line parser for textformat.
+Command line parser for 'textformat'.
 """
 from .. import __version__
 from ..lib import czoutline
@@ -274,73 +274,73 @@ class CommandLineParser:
                              "Without this flag, ANSI codes are used to print "
                              "bold headings."
                         )
-        A = P.parse_args()
-        _logger.info(A)
+        container = P.parse_args()
+        _logger.info(container)
 
-        if A.ohelp:
+        if container.ohelp:
             _printOutlineHelp()
             sys.exit(0)
         #if
-        delattr(A, 'ohelp')
+        delattr(container, 'ohelp')
 
-        if A.a or (A.F is None and A.O is None):
-            setattr(A, 'action', 'a')
-        elif A.F is not None:
-            setattr(A, 'action', 'f')
-            setattr(A, 'lineWidth', A.F)
-        elif A.O is not None:
-            setattr(A, 'action', 'o')
-            setattr(A, 'lineWidth', A.O)
+        if container.a or (container.F is None and container.O is None):
+            setattr(container, 'action', 'a')
+        elif container.F is not None:
+            setattr(container, 'action', 'f')
+            setattr(container, 'lineWidth', container.F)
+        elif container.O is not None:
+            setattr(container, 'action', 'o')
+            setattr(container, 'lineWidth', container.O)
         #elif
-        delattr(A, 'a')
-        delattr(A, 'F')
-        delattr(A, 'O')
+        delattr(container, 'a')
+        delattr(container, 'F')
+        delattr(container, 'O')
 
-        if A.action in ['f', 'o'] and A.lineWidth < 10:
+        if container.action in ['f', 'o'] and container.lineWidth < 10:
             P.error("LINE_WIDTH must be >= 10")
         #if
 
         argError = lambda *opts: P.error("argument -%s: not allowed with argument -%s"
                                          % opts)
-        if A.action in ['a', 'f']:
-            if A.processComments:
-                argError('m', A.action)
+        if container.action in ['a', 'f']:
+            if container.processComments:
+                argError('m', container.action)
             #if
-            if A.printComments:
-                argError('p', A.action)
+            if container.printComments:
+                argError('p', container.action)
             #if
-            if A.lvlWidth is not None:
-                argError('w', A.action)
+            if container.lvlWidth is not None:
+                argError('w', container.action)
             #if
-            delattr(A, 'boldHeadings')
+            delattr(container, 'boldHeadings')
         else: # A.action == 'o'
-            if A.align is not None:
-                argError(A.align, 'O')
+            if container.align is not None:
+                argError(container.align, 'O')
             #if
-            delattr(A, 'align')
-            if A.printComments:
-                A.processComments = True
+            delattr(container, 'align')
+            if container.printComments:
+                container.processComments = True
             #if
-            if A.lvlWidth is None:
-                A.lvlWidth = 4
+            if container.lvlWidth is None:
+                container.lvlWidth = 4
             #if
-            if A.lvlWidth < 0:
+            if container.lvlWidth < 0:
                 P.error("LEVEL_WIDTH must be >= 0")
             #if
         #else
 
-        if A.action in ['a', 'f']:
-            if A.align is None:
-                A.align = 'l'
+        if container.action in ['a', 'f']:
+            if container.align is None:
+                container.align = 'l'
             #if
-            delattr(A, 'printComments')
-            delattr(A, 'processComments')
-            delattr(A, 'lvlWidth')
+            delattr(container, 'printComments')
+            delattr(container, 'processComments')
+            delattr(container, 'lvlWidth')
         #if
 
-        _logger.info(A)
+        _logger.info(container)
 
-        return Args(**vars(A))
+        return Args(**vars(container))
     #parseCommandLine
 
 #CommandLineParser

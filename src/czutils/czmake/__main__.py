@@ -11,7 +11,7 @@
 ################################################################### aczutro ###
 
 """
-Turns a plain list of commands into a Makefile.
+czmake: turns a plain list of commands into a Makefile.
 """
 
 from .clp import CommandLineParser

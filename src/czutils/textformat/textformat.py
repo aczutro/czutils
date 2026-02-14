@@ -27,7 +27,7 @@ def textFormat(text: str, args: Args) -> str:
     :param text: input text.
 
 
-    :param args: Contains the following parameters:
+    :param args: Contains the following attributes:
 
                  action:          'a', 'f' or 'o'
                                   If 'a', only aligns lines, preserving original

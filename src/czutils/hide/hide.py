@@ -11,11 +11,14 @@
 ################################################################### aczutro ###
 
 """
-"Private" help classes and functions for module app.hide.
+Function to hide and "unhide" files.
 """
-from .. import __version__
+from .clp import Args
+from ..lib import czsystem, czuioutput
 
-import argparse
+import shutil
+import os
+import os.path
 
 
 class Breaker(Exception):
@@ -26,115 +29,133 @@ class Breaker(Exception):
 #Breaker
 
 
-class CommandLineParser:
+def hideUnhide(args: Args,
+               uiChannel : czuioutput.OutputChannel = czuioutput.DumbOutputChannel(),
+               ) -> int:
     """
-    Base class for command line parsing.
+    Hides or "unhides" files, directories and symlinks.
+
+    :param args:      Contains the following attributes:
+                      files:       List of strings: each string is a path to a file,
+                                   directory or symlink.
+                      bHide:        If true, hides files.  If false, unhides them.
+                      copy:        If true, instead of renaming the file, makes a
+                                   hidden/unhidden copy.
+                      strict:      In hide mode: If true, refuses to "hide hidden
+                                   files".
+                                   (If false, hiding ".file" means renaming it to
+                                   "..file".)
+                                   In unhide mode: If true, "completely unhides" files,
+                                   i.e. "..file" becomes "file".  (If false, "..file"
+                                   becomes ".file".)
+                      abort:       If true, aborts on first failure.
+                      noOverwrite: If false, silently overwrite target files (but not
+                                   directories).
+                      verbose:     If true, prints executed rename/copy operations to
+                                   sys.stdout.
+
+    :param uiChannel: An output channel for warnings and errors.
+
+    :return: 0 on success, 1 on fail.  Fail means that at least one rename/copy
+             operation has failed.
+
+    :raises: ValueError
+    :raises: hideUnhide does NOT catch exceptions raised by OS-interacting
+             functions like shutil.copy2, shutil.copytree or os.replace.
     """
+    if args.hide is None:
+        raise ValueError("'args.hide' must not be None")
+    #if
 
-    def __init__(self):
-        self.hideMode = None
-        self.appDescription = ""
-        self.helpArgs = ""
-        self.helpCopy = ""
-        self.helpStrict = ""
-        self.helpAbort = "Abort on first failure."
-        self.helpOverwrite = "Overwrite mode: if a file with the target name " \
-                             "already exists, overwrite it without warning. " \
-                             "Does not apply to directories."
-        self.helpVerbose = "Be verbose."
-    # __init__
+    nibbles = []
+    if args.hide:
+        nibbles.append('already') # [0]
+    else:
+        nibbles.append('not') # [0]
+    #else
+    if args.abort:
+        fComplain = uiChannel.error
+        nibbles.append('') # [1]
+        nibbles.append(lambda x: '') # [2]
+    else:
+        fComplain = uiChannel.warning
+        nibbles.append('-- skipping') # [1]
+        nibbles.append(lambda x: "-- skipping '%s'" % x) # [2]
+    #else
 
+    if args.copy:
+        fRename = (lambda _src, _dst: shutil.copy2(_src, _dst, follow_symlinks=False),
+                   lambda _src, _dst: shutil.copytree(_src, _dst, symlinks=True,
+                                                      ignore_dangling_symlinks=True)
+                   )
+    else:
+        fRename = (lambda _src, _dst: os.replace(_src, _dst),
+                   lambda _src, _dst: os.replace(_src, _dst)
+                   )
+    #else
 
-    def parseCommandLine(self) -> argparse.Namespace:
-        """
-        Parses command line.
+    exitCode = 0
 
-        :returns: All arguments and flags bundled in an Args object.
-        """
-        P = argparse.ArgumentParser(description=self.appDescription,
-                                    add_help=True)
-        P.add_argument("--version",
-                       action="version",
-                       version=f"czutils version {__version__}"
-                       )
-        P.add_argument("files",
-                       metavar='FILE',
-                       type=str,
-                       nargs='+',
-                       help=self.helpArgs
-                       )
-        P.add_argument("-c",
-                       dest="copy",
-                       action="store_true",
-                       help=self.helpCopy
-                       )
-        P.add_argument("-s",
-                       dest="strict",
-                       action="store_true",
-                       help=self.helpStrict
-                       )
-        P.add_argument("-a",
-                       dest="abort",
-                       action="store_true",
-                       help=self.helpAbort
-                       )
-        P.add_argument("-o",
-                       dest="noOverwrite",
-                       action="store_false",
-                       help=self.helpOverwrite
-                       )
-        P.add_argument("-v",
-                       dest="verbose",
-                       action="store_true",
-                       help=self.helpVerbose
-                       )
+    for src in args.files:
+        src = src.rstrip(os.sep)
+        directory = os.path.dirname(src)
+        filename = os.path.basename(src)
 
-        container = P.parse_args()
-        setattr(container, "hide", self.hideMode)
+        try:
+            if not src: # may occur if original argument was '/'
+                fComplain("you don't want to operate on '%s'" % os.sep, nibbles[1])
+                raise Breaker()
+            #if
+            if filename in [ os.curdir, os.pardir ]:
+                fComplain("you don't want to operate on '%s'" % src, nibbles[1])
+                raise Breaker()
+            #if
+            if not os.path.exists(src) and not os.path.islink(src):
+                fComplain("file '%s' doesn't exist" % src)
+                raise Breaker()
+            #if
 
-        return container
+            newName = None
+            if args.hide:
+                if filename[0] != '.' or not args.strict:
+                    newName = '.' + filename
+                #if
+            else:
+                if filename[0] == '.':
+                    if args.strict:
+                        newName = filename.strip('.')
+                    else:
+                        newName = filename[1:]
+                    #else
+                #if
+            #else
+            if newName is None:
+                fComplain("file '%s' is" % src, nibbles[0], 'hidden')
+                raise Breaker()
+            #if
 
-    #def parse_args
+            dst = os.path.join(directory, newName)
+            if os.path.exists(dst) and (args.noOverwrite or czsystem.isProperDir(dst)):
+                fComplain("destination '%s' already exists" % dst, nibbles[2](src))
+                raise Breaker()
+            #if
 
-# CommandLineParser
+            fRename[int(czsystem.isProperDir(src))](src, dst)
 
+            if args.verbose:
+                print("'%s' -> '%s'" % (src, dst))
+            #if
+        except Breaker:
+            if args.abort:
+                return 1
+            else:
+                exitCode = 1
+            #else
+        #except
+    #for
 
-class CLPHide(CommandLineParser):
-    """
-    Command line parser for mainHide(...).
-    """
-    def __init__(self):
-        super().__init__()
-        self.hideMode = True
-        self.appDescription = "Prepends a dot to the basename of each " \
-                              "file/directory/symlink."
-        self.helpArgs = "File/directory/symlink to hide."
-        self.helpCopy = "Instead of hiding the file, make a hidden copy of it."
-        self.helpStrict = "Be strict, i.e. fail if the file is already hidden. " \
-                          "Otherwise, prepend a dot to the file's name in any " \
-                          "case, i.e. the file name may end up having multiple dots."
-    #__init__
-
-#CLPHide
-
-
-class CLPUhide(CommandLineParser):
-    """
-    Command line parser for mainUhide(...).
-    """
-    def __init__(self):
-        super().__init__()
-        self.hideMode = False
-        self.appDescription = "Removes the prefix dot from the basename of each " \
-                              "file/directory/symlink."
-        self.helpArgs = 'File/directory/symlink to "unhide".'
-        self.helpCopy = "Instead of unhiding the file, make an unhidden copy of it."
-        self.helpStrict = "Be strict, i.e. unhide the file in any case, " \
-                          "i.e. remove all prefix dots from the file name. " \
-                          "Otherwise, remove only one dot."
-    #__init__
-
-#CLPUhide
+    return exitCode
+#hideUnhide
 
 
 ### aczutro ###################################################################

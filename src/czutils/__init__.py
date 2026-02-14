@@ -11,7 +11,7 @@
 ################################################################### aczutro ###
 
 """
-A "universal" Python library and collection of useful command line utilities.
+A "universal" Python library and a collection of useful command line utilities.
 """
 
 import importlib.metadata
