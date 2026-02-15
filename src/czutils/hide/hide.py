@@ -13,12 +13,12 @@
 """
 Function to hide and "unhide" files.
 """
+from pathlib import Path
+
 from .clp import Args
 from ..lib import czsystem, czuioutput
 
 import shutil
-import os
-import os.path
 
 
 class Breaker(Exception):
@@ -67,58 +67,51 @@ def hideUnhide(args: Args,
         raise ValueError("'args.hide' must not be None")
     #if
 
-    nibbles = []
-    if args.hide:
-        nibbles.append('already') # [0]
-    else:
-        nibbles.append('not') # [0]
-    #else
     if args.abort:
         fComplain = uiChannel.error
-        nibbles.append('') # [1]
-        nibbles.append(lambda x: '') # [2]
     else:
         fComplain = uiChannel.warning
-        nibbles.append('-- skipping') # [1]
-        nibbles.append(lambda x: "-- skipping '%s'" % x) # [2]
     #else
 
     if args.copy:
-        fRename = (lambda _src, _dst: shutil.copy2(_src, _dst, follow_symlinks=False),
-                   lambda _src, _dst: shutil.copytree(_src, _dst, symlinks=True,
-                                                      ignore_dangling_symlinks=True)
+        fRename = (lambda _src, _dst: shutil.copy2(_src, _dst,
+                                                   follow_symlinks=False,
+                                                   ),
+                   lambda _src, _dst: shutil.copytree(_src, _dst,
+                                                      symlinks=True,
+                                                      ignore_dangling_symlinks=True,
+                                                      )
                    )
     else:
-        fRename = (lambda _src, _dst: os.replace(_src, _dst),
-                   lambda _src, _dst: os.replace(_src, _dst)
+        fRename = (lambda _src, _dst: _src.replace(_dst),
+                   lambda _src, _dst: _src.replace(_dst),
                    )
     #else
 
     exitCode = 0
 
     for src in args.files:
-        src = src.rstrip(os.sep)
-        directory = os.path.dirname(src)
-        filename = os.path.basename(src)
+        srcPath = Path(src)
 
         try:
-            if not src: # may occur if original argument was '/'
-                fComplain("you don't want to operate on '%s'" % os.sep, nibbles[1])
+            if srcPath.resolve() in (Path("/"),
+                                     Path(".").resolve(),
+                                     Path("..").resolve(),
+                                     ):
+                fComplain(f"you don't want to operate on '{srcPath}'"
+                          f"{'' if args.abort else ' -- skipping'}")
                 raise Breaker()
             #if
-            if filename in [ os.curdir, os.pardir ]:
-                fComplain("you don't want to operate on '%s'" % src, nibbles[1])
-                raise Breaker()
-            #if
-            if not os.path.exists(src) and not os.path.islink(src):
-                fComplain("file '%s' doesn't exist" % src)
+            if not srcPath.exists():
+                fComplain(f"'{srcPath}' doesn't exist")
                 raise Breaker()
             #if
 
+            filename = srcPath.name
             newName = None
             if args.hide:
                 if filename[0] != '.' or not args.strict:
-                    newName = '.' + filename
+                    newName = f".{filename}"
                 #if
             else:
                 if filename[0] == '.':
@@ -130,20 +123,21 @@ def hideUnhide(args: Args,
                 #if
             #else
             if newName is None:
-                fComplain("file '%s' is" % src, nibbles[0], 'hidden')
+                fComplain(f"'{src}' is {'already' if args.hide else 'not'} hidden")
                 raise Breaker()
             #if
 
-            dst = os.path.join(directory, newName)
-            if os.path.exists(dst) and (args.noOverwrite or czsystem.isProperDir(dst)):
-                fComplain("destination '%s' already exists" % dst, nibbles[2](src))
+            dstPath = srcPath.parent / newName
+            if dstPath.exists() and (args.noOverwrite or czsystem.isProperDir(dstPath)):
+                skipping = "" if args.abort else f" -- skipping '{srcPath}'"
+                fComplain(f"destination '{dstPath}' already exists{skipping}")
                 raise Breaker()
             #if
 
-            fRename[int(czsystem.isProperDir(src))](src, dst)
+            fRename[int(czsystem.isProperDir(src))](srcPath, dstPath)
 
             if args.verbose:
-                print("'%s' -> '%s'" % (src, dst))
+                print(f"'{srcPath}' -> '{srcPath.parent / dstPath.name}'")
             #if
         except Breaker:
             if args.abort:
