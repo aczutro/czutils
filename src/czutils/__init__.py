@@ -16,7 +16,9 @@ A "universal" Python library and a collection of useful command line utilities.
 
 import importlib.metadata
 
+
 try:
+    __project__ = __package__
     __version__ = importlib.metadata.version(__package__ or __name__)
 except importlib.metadata.PackageNotFoundError:
     __version__ = "0.0.0"

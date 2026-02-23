@@ -13,7 +13,7 @@
 """
 Command line parser for 'textformat'.
 """
-from .. import __version__
+from .. import __project__, __version__
 from ..lib import czoutline
 
 import argparse
@@ -186,7 +186,7 @@ class CommandLineParser:
                                     add_help=True)
         P.add_argument("--version",
                        action="version",
-                       version=f"czutils version {__version__}"
+                       version=f"{__project__} version {__version__}"
                        )
         G1 = P.add_argument_group("actions")
         G1 = G1.add_mutually_exclusive_group()

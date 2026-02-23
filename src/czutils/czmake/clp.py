@@ -13,7 +13,7 @@
 """
 Command line parser for 'czmake'.
 """
-from .. import __version__
+from .. import __project__, __version__
 
 import argparse
 from dataclasses import dataclass
@@ -53,7 +53,7 @@ class CommandLineParser:
                                     add_help=True)
         P.add_argument("--version",
                        action="version",
-                       version=f"czutils version {__version__}"
+                       version=f"{__project__} version {__version__}"
                        )
         P.add_argument("inputFile",
                        metavar="INPUT_FILE",
